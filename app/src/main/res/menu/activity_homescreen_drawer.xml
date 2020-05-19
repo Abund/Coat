@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_home"
+            android:icon="@drawable/ic_launcher_background"
+            android:title="@string/menu_home" />
+        <item
+            android:id="@+id/nav_personalPage"
+            android:icon="@drawable/ic_launcher_background"
+            android:title="@string/menu_personalPage" />
+        <item
+            android:id="@+id/nav_blogPost"
+            android:icon="@drawable/ic_launcher_background"
+            android:title="@string/menu_blogPost" />
+        <item
+            android:id="@+id/nav_chats"
+            android:icon="@drawable/ic_launcher_background"
+            android:title="@string/menu_chats" />
+        <item
+            android:id="@+id/nav_viewPsychologist"
+            android:icon="@drawable/ic_launcher_background"
+            android:title="@string/menu_viewPsychologist" />
+        <item
+            android:id="@+id/nav_chatRooms"
+            android:icon="@drawable/ic_launcher_background"
+            android:title="@string/menu_chatRooms" />
+
+        <item
+            android:id="@+id/sign_out"
+            android:icon="@drawable/ic_launcher_background"
+            android:title="@string/menu_logout" />
+    </group>
+
+</menu>

@@ -42,7 +42,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
-        android:background="@color/correctgreen"
+
         android:text="Sign In"
         app:layout_constraintBottom_toTopOf="@+id/textView7"
         app:layout_constraintEnd_toEndOf="parent"
@@ -51,7 +51,7 @@
         app:layout_constraintTop_toBottomOf="@+id/loginPassword" />
 
     <ImageView
-        android:src="@drawable/headericon"
+
         android:id="@+id/textView5"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -97,8 +97,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginBottom="8dp"
-        android:background="@color/correctgreen"
-        android:drawableLeft="@drawable/google_logo"
+
         android:text="Sign In with Google"
         app:layout_constraintBottom_toTopOf="@+id/facebookLoginButton"
         app:layout_constraintEnd_toEndOf="parent"
@@ -152,8 +151,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginBottom="33dp"
-        android:background="@color/correctgreen"
-        android:drawableLeft="@drawable/fb_logo"
+
         android:text="Sign In with Facebook"
         app:layout_constraintBottom_toTopOf="@+id/register"
         app:layout_constraintEnd_toEndOf="parent"

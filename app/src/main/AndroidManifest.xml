@@ -10,7 +10,11 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".ForgetPassword"></activity>
-        <activity android:name=".HomeScreen" />
+        <activity
+            android:name=".HomeScreen"
+            android:label="@string/title_activity_homescreen"
+            android:theme="@style/AppTheme.NoActionBar" />
+
         <activity android:name=".RegistrationPage" />
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
