@@ -82,6 +82,7 @@ public class HomeScreen extends AppCompatActivity
         NavigationView navigationView = findViewById(R.id.nav_view);
 
         imageViewProfile = navigationView.getHeaderView(0).findViewById(R.id.imageViewProfile);
+        //imageViewHomePageProfile = (ImageView) findViewById(R.id.imageViewHomePageProfile);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
@@ -123,17 +124,17 @@ public class HomeScreen extends AppCompatActivity
                     }
                 });
 
-                Picasso.get().load(user.getPhotoUrl()).networkPolicy(NetworkPolicy.OFFLINE).into(imageViewHomePageProfile, new Callback() {
-                    @Override
-                    public void onSuccess() {
-
-                    }
-
-                    @Override
-                    public void onError(Exception e) {
-                        Picasso.get().load(user.getPhotoUrl()).into(imageViewHomePageProfile);
-                    }
-                });
+//                Picasso.get().load(user.getPhotoUrl()).networkPolicy(NetworkPolicy.OFFLINE).into(imageViewHomePageProfile, new Callback() {
+//                    @Override
+//                    public void onSuccess() {
+//
+//                    }
+//
+//                    @Override
+//                    public void onError(Exception e) {
+//                        Picasso.get().load(user.getPhotoUrl()).into(imageViewHomePageProfile);
+//                    }
+//                });
             }
         }
     }

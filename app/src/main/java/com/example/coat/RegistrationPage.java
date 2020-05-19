@@ -130,7 +130,6 @@ public class RegistrationPage extends AppCompatActivity {
         firebaseAuth = FirebaseAuth.getInstance();
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         final DatabaseReference myRef = database.getReference("users");
-        final DatabaseReference myRef1 = database.getReference("goal");
 
         if(firebaseAuth.getCurrentUser()!=null){
             Intent at = new Intent(RegistrationPage.this, HomeScreen.class);
@@ -316,7 +315,6 @@ public class RegistrationPage extends AppCompatActivity {
 
             FirebaseDatabase database = FirebaseDatabase.getInstance();
             final DatabaseReference myRef = database.getReference("users");
-            final DatabaseReference myRef1 = database.getReference("goal");
 
             User user = new User();
             user.setEmail(personEmail);

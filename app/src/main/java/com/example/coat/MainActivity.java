@@ -299,7 +299,6 @@ public class MainActivity extends AppCompatActivity {
 
             FirebaseDatabase database = FirebaseDatabase.getInstance();
             final DatabaseReference myRef = database.getReference("users");
-            final DatabaseReference myRef1 = database.getReference("goal");
 
             User user = new User();
             user.setEmail(personEmail);
