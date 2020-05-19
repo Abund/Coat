@@ -15,6 +15,17 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.healthcare.model.Goal;
+import com.example.healthcare.model.User;
+import com.facebook.AccessToken;
+import com.facebook.AccessTokenTracker;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -29,6 +40,8 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -147,7 +160,34 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-
+    private void useLoginInformation(AccessToken accessToken) {
+        /**
+         Creating the GraphRequest to fetch user details
+         1st Param - AccessToken
+         2nd Param - Callback (which will be invoked once the request is successful)
+         **/
+        GraphRequest request = GraphRequest.newMeRequest(accessToken, new GraphRequest.GraphJSONObjectCallback() {
+            //OnCompleted is invoked once the GraphRequest is successful
+            @Override
+            public void onCompleted(JSONObject object, GraphResponse response) {
+                try {
+                    String name = object.getString("name");
+                    String email = object.getString("email");
+                    String image = object.getJSONObject("picture").getJSONObject("data").getString("url");
+//                    displayName.setText(name);
+//                    emailID.setText(email);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        // We set parameters to the GraphRequest using a Bundle.
+        Bundle parameters = new Bundle();
+        parameters.putString("fields", "id,name,email,picture.width(200)");
+        request.setParameters(parameters);
+        // Initiate the GraphRequest
+        request.executeAsync();
+    }
 
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
         Log.d(TAG, "firebaseAuthWithGoogle:" + acct.getId());
@@ -185,7 +225,33 @@ public class MainActivity extends AppCompatActivity {
             Uri personPhoto = acct.getPhotoUrl();
             Toast.makeText(MainActivity.this,personFamilyName+"Registration Successful",Toast.LENGTH_SHORT).show();
 
+            FirebaseDatabase database = FirebaseDatabase.getInstance();
+            final DatabaseReference myRef = database.getReference("users");
+            final DatabaseReference myRef1 = database.getReference("goal");
 
+            User user = new User();
+            user.setEmail(personEmail);
+            user.setFirstName(personGivenName);
+            user.setLastName(personFamilyName);
+
+            Goal goal = new Goal();
+            goal.setGoal("2700");
+            goal.setDate("2019");
+            myRef1.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).setValue(goal).addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                }
+            });
+
+            myRef.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).setValue(user).addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    Toast.makeText(MainActivity.this,"successful",Toast.LENGTH_SHORT).show();
+                    Intent at = new Intent(MainActivity.this, HomeScreen.class);
+                    startActivity(at);
+                }
+            });
+            myRef.keepSynced(true);
 
 
         }
