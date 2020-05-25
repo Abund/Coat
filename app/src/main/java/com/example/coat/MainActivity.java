@@ -304,6 +304,7 @@ public class MainActivity extends AppCompatActivity {
             user.setEmail(personEmail);
             user.setFirstName(personGivenName);
             user.setLastName(personFamilyName);
+            user.setUid(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
 
             myRef.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).setValue(user).addOnSuccessListener(new OnSuccessListener<Void>() {

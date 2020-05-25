@@ -21,8 +21,10 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
+import com.example.coat.HomeScreen;
 import com.example.coat.MainActivity;
 import com.example.coat.R;
+import com.facebook.login.LoginManager;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -187,6 +189,37 @@ public class PersonalPage extends Fragment {
         builder.create().show();
     }
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstances){
+        setHasOptionsMenu(true);
+        super.onCreate(savedInstances);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        inflater.inflate(R.menu.homescreen1, menu);
+        super.onCreateOptionsMenu(menu,inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            firebaseAuth = FirebaseAuth.getInstance();
+            LoginManager.getInstance().logOut();
+            firebaseAuth.signOut();
+            Intent at = new Intent(getActivity(), MainActivity.class);
+            startActivity(at);
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
 
 
     @Override
