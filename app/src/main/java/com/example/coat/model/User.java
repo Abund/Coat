@@ -7,6 +7,20 @@ public class User {
     private String lastName;
     private String email;
     private String password;
+    private String uid;
+
+    public User(){
+
+    }
+
+    public User(int userId, String firstName, String lastName, String email, String password, String uid) {
+        this.userId = userId;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.password = password;
+        this.uid = uid;
+    }
 
     public int getUserId() {
         return userId;
@@ -48,5 +62,11 @@ public class User {
         this.password = password;
     }
 
+    public String getUid() {
+        return uid;
+    }
 
+    public void setUid(String uid) {
+        this.uid = uid;
+    }
 }
