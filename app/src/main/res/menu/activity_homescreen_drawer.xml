@@ -31,7 +31,7 @@
 
         <item
             android:id="@+id/sign_out"
-            android:icon="@drawable/ic_launcher_background"
+            android:icon="@drawable/ic_system_update_alt_black_24dp"
             android:title="@string/menu_logout" />
     </group>
 

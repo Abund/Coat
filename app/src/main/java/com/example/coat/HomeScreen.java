@@ -21,9 +21,12 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.coat.fragments.BlogPost;
@@ -31,15 +34,19 @@ import com.example.coat.fragments.ChatRooms;
 import com.example.coat.fragments.Chats;
 import com.example.coat.fragments.PersonalPage;
 import com.example.coat.fragments.ViewPsychologist;
+import com.example.coat.model.User;
 import com.facebook.login.LoginManager;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -55,6 +62,7 @@ import java.util.List;
 public class HomeScreen extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener  {
 
+    private TextView clientName,profileName;
     private ImageView imageViewCalories,imageViewBloodPressure,imageViewBloodSugar,imageViewProfile,imageViewHomePageProfile,imageViewGo;
     FirebaseAuth firebaseAuth;
     FirebaseUser userf;
@@ -81,6 +89,7 @@ public class HomeScreen extends AppCompatActivity
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
 
+        profileName = navigationView.getHeaderView(0).findViewById(R.id.profileName);
         imageViewProfile = navigationView.getHeaderView(0).findViewById(R.id.imageViewProfile);
         //imageViewHomePageProfile = (ImageView) findViewById(R.id.imageViewHomePageProfile);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -137,6 +146,53 @@ public class HomeScreen extends AppCompatActivity
 //                });
             }
         }
+
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                List<String> keys = new ArrayList<>();
+                User user= new User();
+                user=dataSnapshot.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).getValue(User.class);
+                //clientName.setText(user.getFirstName());
+                profileName.setText(user.getFirstName()+" "+user.getLastName());
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Toast.makeText(HomeScreen.this,"Oppss... something went wrong",Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        imageViewProfile.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                dialog.show();
+//                Intent intent= new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+//                if(intent.resolveActivity(getPackageManager())!=null){
+//                    startActivityForResult(intent,TAKE_IMAGE_CODE);
+//                }
+            }
+        });
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                String choice = adapter.getItem(i);
+                if(choice.equalsIgnoreCase("Camera")){
+                    Intent intent= new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                    if(intent.resolveActivity(getPackageManager())!=null){
+                        startActivityForResult(intent,TAKE_IMAGE_CODE);
+                    }
+                    dialog.dismiss();
+                }else{
+                    Intent gallery = new Intent();
+                    gallery.setType("image/*");
+                    gallery.setAction(Intent.ACTION_GET_CONTENT);
+                    startActivityForResult(Intent.createChooser(gallery,"select picture"),PICK_IMAGE);
+                    dialog.dismiss();
+                }
+            }
+        });
 
     }
 
