@@ -282,7 +282,7 @@ public class HomeScreen extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.homescreen, menu);
-        return true;
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
@@ -294,7 +294,11 @@ public class HomeScreen extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            return true;
+            firebaseAuth = FirebaseAuth.getInstance();
+            LoginManager.getInstance().logOut();
+            firebaseAuth.signOut();
+            Intent at = new Intent(HomeScreen.this, MainActivity.class);
+            startActivity(at);
         }
 
         return super.onOptionsItemSelected(item);
