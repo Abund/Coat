@@ -1,6 +1,7 @@
 package com.example.coat.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.coat.MessageActivity;
 import com.example.coat.R;
 import com.example.coat.model.User;
 
@@ -35,6 +37,7 @@ public class AdapterUser extends RecyclerView.Adapter<AdapterUser.MyHolder>{
 
     @Override
     public void onBindViewHolder(@NonNull MyHolder holder, int position) {
+        final String hisUid = userList.get(position).getUid();
         String firstName= userList.get(position).getFirstName();
         String lastName= userList.get(position).getLastName();
         final String email= userList.get(position).getEmail();
@@ -50,7 +53,10 @@ public class AdapterUser extends RecyclerView.Adapter<AdapterUser.MyHolder>{
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(context,""+email,Toast.LENGTH_SHORT).show();
+//                Toast.makeText(context,""+email,Toast.LENGTH_SHORT).show();
+                Intent intent= new Intent(context, MessageActivity.class);
+                intent.putExtra("hisUid",hisUid);
+                context.startActivity(intent);
             }
         });
     }
