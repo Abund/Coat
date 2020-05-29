@@ -44,6 +44,10 @@ public class Chats extends Fragment {
 
     View view;
 
+    public Chats(){
+
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater , ViewGroup container, Bundle savedInstanceState) {

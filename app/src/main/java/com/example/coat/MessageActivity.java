@@ -63,9 +63,9 @@ public class MessageActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_message);
 
-//        Toolbar toolbar = findViewById(R.id.toolbar);
-//        setSupportActionBar(toolbar);
-//        toolbar.setTitle("");
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        toolbar.setTitle("");
         recyclerView = findViewById(R.id.chat_recycler);
         imageView= findViewById(R.id.profileIv);
         nameTv= findViewById(R.id.nameChatTv);
@@ -92,7 +92,7 @@ public class MessageActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for(DataSnapshot ds: dataSnapshot.getChildren()){
-                    String UserName =""+ ds.child("userName").getValue();
+                    String UserName =""+ ds.child("firstName").getValue();
                     String email =""+ ds.child("email").getValue();
 
                     nameTv.setText(UserName);
@@ -156,7 +156,7 @@ public class MessageActivity extends AppCompatActivity {
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                chatsList.size();
+                chatsList.clear();
                 for(DataSnapshot ds: dataSnapshot.getChildren()){
                     Chats chats = ds.getValue(Chats.class);
                     if(chats.getReceiver().equals(myUid)&&chats.getSender().equals(hisUid)||

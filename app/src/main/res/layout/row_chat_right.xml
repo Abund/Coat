@@ -25,6 +25,7 @@
         <TextView
             android:id="@+id/messageTv"
             android:textSize="16dp"
+            android:background="@drawable/bg_sender"
             android:layout_weight="1"
             android:padding="15dp"
             android:text="His Message"

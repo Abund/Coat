@@ -59,7 +59,7 @@ public class AdapterChat extends RecyclerView.Adapter<AdapterChat.MyHolder>{
         String dateTime= DateFormat.format("dd/MM/yyyy hh:mm aa",calendar).toString();
 
         holder.message.setText(message);
-        holder.timeStamp.setText(timeStamp);
+        holder.timeStamp.setText(dateTime);
 
         if(position==chatsList.size()-1) {
             if(chatsList.get(position).isSeen()){
