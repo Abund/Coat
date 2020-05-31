@@ -306,6 +306,7 @@ public class MainActivity extends AppCompatActivity {
             user.setLastName(personFamilyName);
             user.setUid(FirebaseAuth.getInstance().getCurrentUser().getUid());
             user.setOnlineStatus("online");
+            user.setTypingTo("noOne");
 
             myRef.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).setValue(user).addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override

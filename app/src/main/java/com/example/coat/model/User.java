@@ -9,12 +9,13 @@ public class User {
     private String password;
     private String uid;
     private String onlineStatus;
+    private String typingTo;
 
     public User(){
 
     }
 
-    public User(int userId, String firstName, String lastName, String email, String password, String uid,String onlineStatus) {
+    public User(int userId, String firstName, String lastName, String email, String password, String uid,String onlineStatus,String typingTo) {
         this.userId = userId;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -22,6 +23,7 @@ public class User {
         this.password = password;
         this.uid = uid;
         this.onlineStatus=onlineStatus;
+        this.typingTo=typingTo;
     }
 
     public int getUserId() {
@@ -78,5 +80,13 @@ public class User {
 
     public void setOnlineStatus(String onlineStatus) {
         this.onlineStatus = onlineStatus;
+    }
+
+    public String getTypingTo() {
+        return typingTo;
+    }
+
+    public void setTypingTo(String typingTo) {
+        this.typingTo = typingTo;
     }
 }

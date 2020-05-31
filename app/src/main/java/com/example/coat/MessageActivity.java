@@ -8,7 +8,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.text.format.DateFormat;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -98,14 +100,18 @@ public class MessageActivity extends AppCompatActivity {
                     String UserName =""+ ds.child("firstName").getValue();
                     String email =""+ ds.child("email").getValue();
                     String onlineStatus=""+ ds.child("onlineStatus").getValue();
-
-                    if(onlineStatus.equalsIgnoreCase("online")){
-                        userStatusTv.setText(onlineStatus);
-                    }else{
-                        Calendar calendar = Calendar.getInstance(Locale.ENGLISH);
-                        calendar.setTimeInMillis(Long.parseLong(onlineStatus));
-                        String dateTime= DateFormat.format("dd/MM/yyyy hh:mm aa",calendar).toString();
-                        userStatusTv.setText("Last seen at: "+dateTime);
+                    String typingStatus =""+ ds.child("typingTo").getValue();
+                    if(typingStatus.equals(myUid)){
+                        userStatusTv.setText("typing...");
+                    }else {
+                        if(onlineStatus.equalsIgnoreCase("online")){
+                            userStatusTv.setText(onlineStatus);
+                        }else{
+                            Calendar calendar = Calendar.getInstance(Locale.ENGLISH);
+                            calendar.setTimeInMillis(Long.parseLong(onlineStatus));
+                            String dateTime= DateFormat.format("dd/MM/yyyy hh:mm aa",calendar).toString();
+                            userStatusTv.setText("Last seen at: "+dateTime);
+                        }
                     }
                     nameTv.setText(UserName);
                 }
@@ -127,6 +133,27 @@ public class MessageActivity extends AppCompatActivity {
                 }else{
                     sendMessage(message);
                 }
+            }
+        });
+
+        messageEt.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if(charSequence.toString().trim().length()==0){
+                    checkTypingStatus("noOne");
+                }else{
+                    checkTypingStatus(hisUid);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
             }
         });
 
@@ -170,6 +197,7 @@ public class MessageActivity extends AppCompatActivity {
         String timeStamp= String.valueOf(System.currentTimeMillis());
         //set offline with last seen time stamp
         checkOnlineStatus("timeStamp");
+        checkTypingStatus("noOne");
         getDatabaseReference.removeEventListener(valueEventListener);
     }
 
@@ -225,6 +253,13 @@ public class MessageActivity extends AppCompatActivity {
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("users").child(myUid);
         HashMap<String,Object> hashMap = new HashMap<>();
         hashMap.put("onlineStatus", status);
+        databaseReference.updateChildren(hashMap);
+    }
+
+    private void checkTypingStatus(String typing){
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("users").child(myUid);
+        HashMap<String,Object> hashMap = new HashMap<>();
+        hashMap.put("typingTo", typing);
         databaseReference.updateChildren(hashMap);
     }
 
