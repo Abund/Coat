@@ -8,18 +8,20 @@ public class User {
     private String email;
     private String password;
     private String uid;
+    private String onlineStatus;
 
     public User(){
 
     }
 
-    public User(int userId, String firstName, String lastName, String email, String password, String uid) {
+    public User(int userId, String firstName, String lastName, String email, String password, String uid,String onlineStatus) {
         this.userId = userId;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.password = password;
         this.uid = uid;
+        this.onlineStatus=onlineStatus;
     }
 
     public int getUserId() {
@@ -68,5 +70,13 @@ public class User {
 
     public void setUid(String uid) {
         this.uid = uid;
+    }
+
+    public String getOnlineStatus() {
+        return onlineStatus;
+    }
+
+    public void setOnlineStatus(String onlineStatus) {
+        this.onlineStatus = onlineStatus;
     }
 }

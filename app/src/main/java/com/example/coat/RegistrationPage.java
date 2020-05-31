@@ -168,6 +168,7 @@ public class RegistrationPage extends AppCompatActivity {
                             user.setFirstName(firstName.getText().toString().trim());
                             user.setLastName(lastName.getText().toString().trim());
                             user.setUid(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                            user.setOnlineStatus("online");
 
                             myRef.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).setValue(user).addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
@@ -322,6 +323,7 @@ public class RegistrationPage extends AppCompatActivity {
             user.setFirstName(personGivenName);
             user.setLastName(personFamilyName);
             user.setUid(FirebaseAuth.getInstance().getCurrentUser().getUid());
+            user.setOnlineStatus("online");
 
             myRef.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).setValue(user).addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override
