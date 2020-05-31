@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.text.format.DateFormat;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -32,8 +33,10 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 public class MessageActivity extends AppCompatActivity {
 
@@ -94,7 +97,16 @@ public class MessageActivity extends AppCompatActivity {
                 for(DataSnapshot ds: dataSnapshot.getChildren()){
                     String UserName =""+ ds.child("firstName").getValue();
                     String email =""+ ds.child("email").getValue();
+                    String onlineStatus=""+ ds.child("onlineStatus").getValue();
 
+                    if(onlineStatus.equalsIgnoreCase("online")){
+                        userStatusTv.setText(onlineStatus);
+                    }else{
+                        Calendar calendar = Calendar.getInstance(Locale.ENGLISH);
+                        calendar.setTimeInMillis(Long.parseLong(onlineStatus));
+                        String dateTime= DateFormat.format("dd/MM/yyyy hh:mm aa",calendar).toString();
+                        userStatusTv.setText("Last seen at: "+dateTime);
+                    }
                     nameTv.setText(UserName);
                 }
             }
@@ -143,11 +155,29 @@ public class MessageActivity extends AppCompatActivity {
             }
         });
     }
+    @Override
+    protected  void onStart(){
+        checkUserStatus();
+        //set online
+        checkOnlineStatus("online");
+        super.onStart();
+    }
 
     @Override
     protected void onPause(){
         super.onPause();
+        //get time stamp
+        String timeStamp= String.valueOf(System.currentTimeMillis());
+        //set offline with last seen time stamp
+        checkOnlineStatus("timeStamp");
         getDatabaseReference.removeEventListener(valueEventListener);
+    }
+
+    @Override
+    protected void onResume(){
+        //set online
+        checkOnlineStatus("online");
+        super.onResume();
     }
 
     private void readMessage() {
@@ -191,10 +221,11 @@ public class MessageActivity extends AppCompatActivity {
         messageEt.setText("");
     }
 
-    @Override
-    protected  void onStart(){
-        checkUserStatus();
-        super.onStart();
+    private void checkOnlineStatus(String status){
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("users").child(myUid);
+        HashMap<String,Object> hashMap = new HashMap<>();
+        hashMap.put("onlineStatus", status);
+        databaseReference.updateChildren(hashMap);
     }
 
     @Override
