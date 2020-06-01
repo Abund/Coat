@@ -24,6 +24,13 @@ import android.widget.Toast;
 
 import com.example.coat.adapter.AdapterChat;
 import com.example.coat.model.Chats;
+import com.example.coat.model.User;
+import com.example.coat.notifications.APIService;
+import com.example.coat.notifications.Client;
+import com.example.coat.notifications.Data;
+import com.example.coat.notifications.Response;
+import com.example.coat.notifications.Sender;
+import com.example.coat.notifications.Token;
 import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -39,6 +46,9 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+
+import retrofit2.Call;
+import retrofit2.Callback;
 
 public class MessageActivity extends AppCompatActivity {
 
@@ -63,6 +73,9 @@ public class MessageActivity extends AppCompatActivity {
     String myUid;
     String hisImage;
 
+    APIService apiService;
+    boolean notify =false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,6 +90,8 @@ public class MessageActivity extends AppCompatActivity {
         userStatusTv= findViewById(R.id.userStatusTv);
         messageEt= findViewById(R.id.messageEt);
         imageButton= findViewById(R.id.sendBtn);
+
+        apiService = Client.getRetrofit("https://fcm.googleapis.com/").create(APIService.class);
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setStackFromEnd(true);
@@ -127,12 +142,14 @@ public class MessageActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View view) {
+                notify=true;
                 String message = messageEt.getText().toString().trim();
                 if(TextUtils.isEmpty(message)){
                     Toast.makeText(MessageActivity.this,"Cannot send empty messsage",Toast.LENGTH_SHORT).show();
                 }else{
                     sendMessage(message);
                 }
+                messageEt.setText("");
             }
         });
 
@@ -234,7 +251,7 @@ public class MessageActivity extends AppCompatActivity {
         });
     }
 
-    private void sendMessage(String message) {
+    private void sendMessage(final String message) {
         DatabaseReference databaseReference= FirebaseDatabase.getInstance().getReference();
 
         String timeStamp = String.valueOf(System.currentTimeMillis());
@@ -246,7 +263,58 @@ public class MessageActivity extends AppCompatActivity {
         hashMap.put("timeStamp",timeStamp);
         hashMap.put("isSeen",false);
         databaseReference.child("Chats").push().setValue(hashMap);
-        messageEt.setText("");
+//        messageEt.setText("");
+//
+        DatabaseReference databaseReference1 = FirebaseDatabase.getInstance().getReference("users").child(myUid);
+        databaseReference1.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                User user = dataSnapshot.getValue(User.class);
+                if(notify){
+                    sendNotification(hisUid,user.getFirstName(),message);
+                }
+                notify=false;
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+
+    private void sendNotification(final String hisUid, final String firstName, final String message) {
+        DatabaseReference allTokens = FirebaseDatabase.getInstance().getReference("Tokens");
+        Query query = allTokens.orderByKey().equalTo(hisUid);
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for(DataSnapshot ds: dataSnapshot.getChildren()){
+                    Token token =ds.getValue(Token.class);
+                    Data data = new Data(myUid,firstName+":"+message,"New Message",hisUid,R.drawable.ic_account_circle_black_24dp);
+
+                    Sender sender = new Sender(data,token.getToken());
+                    apiService.sendNotification(sender)
+                            .enqueue(new Callback<Response>() {
+                                @Override
+                                public void onResponse(Call<Response> call, retrofit2.Response<Response> response) {
+                                    Toast.makeText(MessageActivity.this,""+response.message(),Toast.LENGTH_SHORT).show();
+                                }
+
+                                @Override
+                                public void onFailure(Call<Response> call, Throwable t) {
+
+                                }
+                            });
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
     private void checkOnlineStatus(String status){
