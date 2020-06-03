@@ -44,7 +44,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -305,7 +308,8 @@ public class MainActivity extends AppCompatActivity {
             user.setFirstName(personGivenName);
             user.setLastName(personFamilyName);
             user.setUid(FirebaseAuth.getInstance().getCurrentUser().getUid());
-            user.setOnlineStatus("online");
+            String timeStamp= String.valueOf(System.currentTimeMillis());
+            user.setOnlineStatus(timeStamp);
             user.setTypingTo("noOne");
 
             myRef.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).setValue(user).addOnSuccessListener(new OnSuccessListener<Void>() {

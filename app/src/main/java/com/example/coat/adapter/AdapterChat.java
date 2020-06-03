@@ -72,6 +72,16 @@ public class AdapterChat extends RecyclerView.Adapter<AdapterChat.MyHolder>{
         holder.message.setText(message);
         holder.timeStamp.setText(dateTime);
 
+        if(position==chatsList.size()-1) {
+            if(chatsList.get(position).isSeen()){
+                holder.isSeen.setText("Seen");
+            }else {
+                holder.isSeen.setText("Sent");
+            }
+        }else {
+            holder.isSeen.setVisibility(View.GONE);
+        }
+
         //click to show delete dialogue
         holder.messageLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -95,32 +105,24 @@ public class AdapterChat extends RecyclerView.Adapter<AdapterChat.MyHolder>{
             }
         });
 
-        if(position==chatsList.size()-1) {
-            if(chatsList.get(position).isSeen()){
-                holder.isSeen.setText("Seen");
-            }else {
-                holder.isSeen.setText("Delivered");
-            }
-        }else {
-            holder.isSeen.setVisibility(View.GONE);
-        }
+
     }
 
     private void deleteMessage(int position) {
         final String myUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
         String messageTimeStamp = chatsList.get(position).getTimeStamp();
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("chats");
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Chats");
         Query query = databaseReference.orderByChild("timeStamp").equalTo(messageTimeStamp);
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for(DataSnapshot ds: dataSnapshot.getChildren()){
                     if(ds.child("sender").getValue().equals(myUid)){
-                        ds.getRef().removeValue();
-//                        HashMap<String,Object> hashMap= new HashMap<>();
-//                        hashMap.put("message","this message was deleted");
-//                        ds.getRef().updateChildren(hashMap);
+                        //ds.getRef().removeValue();
+                        HashMap<String,Object> hashMap= new HashMap<>();
+                        hashMap.put("message","this message was deleted");
+                        ds.getRef().updateChildren(hashMap);
 
                         Toast.makeText(context,"Message deleted ",Toast.LENGTH_SHORT).show();
                     }else{

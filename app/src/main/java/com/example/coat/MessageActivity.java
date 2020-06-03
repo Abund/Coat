@@ -63,8 +63,8 @@ public class MessageActivity extends AppCompatActivity {
     FirebaseDatabase firebaseDatabase;
     DatabaseReference databaseReference;
 
-    ValueEventListener valueEventListener;
-    DatabaseReference getDatabaseReference;
+    ValueEventListener seenListener;
+    DatabaseReference userRefForSeen;
 
     List<Chats> chatsList;
     AdapterChat adapterChat;
@@ -145,7 +145,7 @@ public class MessageActivity extends AppCompatActivity {
                 notify=true;
                 String message = messageEt.getText().toString().trim();
                 if(TextUtils.isEmpty(message)){
-                    Toast.makeText(MessageActivity.this,"Cannot send empty messsage",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MessageActivity.this,"Cannot send empty message",Toast.LENGTH_SHORT).show();
                 }else{
                     sendMessage(message);
                 }
@@ -173,14 +173,84 @@ public class MessageActivity extends AppCompatActivity {
 
             }
         });
-
-        readMessage();
         seenMessage();
+        readMessage();
+
+    }
+
+
+    @Override
+    protected  void onStart(){
+        checkUserStatus();
+        //set online
+        checkOnlineStatus("online");
+        super.onStart();
+    }
+
+    @Override
+    protected void onPause(){
+        super.onPause();
+        //get time stamp
+        String timeStamp= String.valueOf(System.currentTimeMillis());
+        //set offline with last seen time stamp
+        checkOnlineStatus(timeStamp);
+        checkTypingStatus("noOne");
+        userRefForSeen.removeEventListener(seenListener);
+    }
+
+    @Override
+    protected void onResume(){
+        //set online
+        checkOnlineStatus("online");
+        super.onResume();
+    }
+
+    private void checkOnlineStatus(String status){
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("users").child(myUid);
+        HashMap<String,Object> hashMap = new HashMap<>();
+        hashMap.put("onlineStatus", status);
+        databaseReference.updateChildren(hashMap);
+    }
+
+    private void checkTypingStatus(String typing){
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("users").child(myUid);
+        HashMap<String,Object> hashMap = new HashMap<>();
+        hashMap.put("typingTo", typing);
+        databaseReference.updateChildren(hashMap);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.homescreen,menu);
+        menu.findItem(R.id.action_search).setVisible(false);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+        checkUserStatus();
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void checkUserStatus(){
+        FirebaseUser user= firebaseAuth.getCurrentUser();
+        if(user !=null){
+            myUid= user.getUid();
+        }else{
+            Intent at = new Intent(this, MainActivity.class);
+            startActivity(at);
+            finish();
+        }
     }
 
     private void seenMessage() {
-        getDatabaseReference = FirebaseDatabase.getInstance().getReference("Chats");
-        valueEventListener = getDatabaseReference.addValueEventListener(new ValueEventListener() {
+        userRefForSeen = FirebaseDatabase.getInstance().getReference("Chats");
+        seenListener = userRefForSeen.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for(DataSnapshot ds: dataSnapshot.getChildren()){
@@ -198,31 +268,6 @@ public class MessageActivity extends AppCompatActivity {
 
             }
         });
-    }
-    @Override
-    protected  void onStart(){
-        checkUserStatus();
-        //set online
-        checkOnlineStatus("online");
-        super.onStart();
-    }
-
-    @Override
-    protected void onPause(){
-        super.onPause();
-        //get time stamp
-        String timeStamp= String.valueOf(System.currentTimeMillis());
-        //set offline with last seen time stamp
-        checkOnlineStatus("timeStamp");
-        checkTypingStatus("noOne");
-        getDatabaseReference.removeEventListener(valueEventListener);
-    }
-
-    @Override
-    protected void onResume(){
-        //set online
-        checkOnlineStatus("online");
-        super.onResume();
     }
 
     private void readMessage() {
@@ -315,48 +360,5 @@ public class MessageActivity extends AppCompatActivity {
 
             }
         });
-    }
-
-    private void checkOnlineStatus(String status){
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("users").child(myUid);
-        HashMap<String,Object> hashMap = new HashMap<>();
-        hashMap.put("onlineStatus", status);
-        databaseReference.updateChildren(hashMap);
-    }
-
-    private void checkTypingStatus(String typing){
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("users").child(myUid);
-        HashMap<String,Object> hashMap = new HashMap<>();
-        hashMap.put("typingTo", typing);
-        databaseReference.updateChildren(hashMap);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.homescreen,menu);
-        menu.findItem(R.id.action_search).setVisible(false);
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        checkUserStatus();
-        return super.onOptionsItemSelected(item);
-    }
-
-    private void checkUserStatus(){
-        FirebaseUser user= firebaseAuth.getCurrentUser();
-        if(user !=null){
-            myUid= user.getUid();
-        }else{
-            Intent at = new Intent(MessageActivity.this, MainActivity.class);
-            startActivity(at);
-            finish();
-        }
     }
 }

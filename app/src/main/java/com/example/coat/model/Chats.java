@@ -7,8 +7,6 @@ public class Chats {
     String timeStamp;
     boolean isSeen;
 
-
-
     public Chats() {
     }
 
@@ -59,5 +57,4 @@ public class Chats {
     public void setSeen(boolean seen) {
         isSeen = seen;
     }
-
 }
