@@ -105,12 +105,10 @@ public class AdapterChat extends RecyclerView.Adapter<AdapterChat.MyHolder>{
             }
         });
 
-
     }
 
     private void deleteMessage(int position) {
         final String myUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-
         String messageTimeStamp = chatsList.get(position).getTimeStamp();
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Chats");
         Query query = databaseReference.orderByChild("timeStamp").equalTo(messageTimeStamp);
@@ -131,7 +129,6 @@ public class AdapterChat extends RecyclerView.Adapter<AdapterChat.MyHolder>{
 
                 }
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
 

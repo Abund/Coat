@@ -348,6 +348,9 @@ public class HomeScreen extends AppCompatActivity
             Fragment newFragment =  new ChatRooms();
             replaceFragment(newFragment);
 
+        }else if (id == R.id.action_add_post) {
+            startActivity(new Intent(HomeScreen.this,AddPostActivity.class));
+
         }
         else if (id == R.id.sign_out) {
 

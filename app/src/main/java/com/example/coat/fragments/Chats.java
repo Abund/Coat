@@ -63,30 +63,14 @@ public class Chats extends Fragment {
         return view;
     }
 
-    private void getAllUsers() {
-        final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-        DatabaseReference reference= FirebaseDatabase.getInstance().getReference("users");
-        reference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                userList.clear();
-                for(DataSnapshot ds:dataSnapshot.getChildren()){
-                    User user = new User();
-                     user = ds.getValue(User.class);
-                    if(!user.getUid().equals(firebaseUser.getUid())){
-                        userList.add(user);
-                    }
+    private void checkUserStatus(){
+        FirebaseUser user= firebaseAuth.getCurrentUser();
+        if(user !=null){
 
-                    adapterUser = new AdapterUser(getActivity(),userList);
-                    recyclerView.setAdapter(adapterUser);
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
+        }else{
+            Intent at = new Intent(getActivity(), MainActivity.class);
+            startActivity(at);
+        }
     }
 
     @Override
@@ -100,6 +84,7 @@ public class Chats extends Fragment {
         // Inflate the menu; this adds items to the action bar if it is present.
         inflater.inflate(R.menu.homescreen, menu);
 
+        menu.findItem(R.id.action_add_post).setVisible(false);
         MenuItem item = menu.findItem(R.id.action_search);
         SearchView searchView= (SearchView)MenuItemCompat.getActionView(item);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -125,6 +110,23 @@ public class Chats extends Fragment {
         });
 
         super.onCreateOptionsMenu(menu,inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            firebaseAuth = FirebaseAuth.getInstance();
+            firebaseAuth.signOut();
+            checkUserStatus();
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     private void searchUser(final String query) {
@@ -162,36 +164,35 @@ public class Chats extends Fragment {
         });
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+    private void getAllUsers() {
+        final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        DatabaseReference reference= FirebaseDatabase.getInstance().getReference("users");
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                userList.clear();
+                for(DataSnapshot ds:dataSnapshot.getChildren()){
+                    User user = new User();
+                    user = ds.getValue(User.class);
+                    if(!user.getUid().equals(firebaseUser.getUid())){
+                        userList.add(user);
+                    }
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            firebaseAuth = FirebaseAuth.getInstance();
-            firebaseAuth.signOut();
-            checkUserStatus();
-        }
+                    adapterUser = new AdapterUser(getActivity(),userList);
+                    recyclerView.setAdapter(adapterUser);
+                }
+            }
 
-        return super.onOptionsItemSelected(item);
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-    }
-
-    private void checkUserStatus(){
-        FirebaseUser user= firebaseAuth.getCurrentUser();
-        if(user !=null){
-
-        }else{
-            Intent at = new Intent(getActivity(), MainActivity.class);
-            startActivity(at);
-        }
     }
 
 }

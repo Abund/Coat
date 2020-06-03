@@ -21,6 +21,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
+import com.example.coat.AddPostActivity;
 import com.example.coat.HomeScreen;
 import com.example.coat.MainActivity;
 import com.example.coat.R;
@@ -198,8 +199,9 @@ public class PersonalPage extends Fragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        inflater.inflate(R.menu.homescreen1, menu);
+        inflater.inflate(R.menu.homescreen, menu);
         super.onCreateOptionsMenu(menu,inflater);
+        menu.findItem(R.id.action_search).setVisible(false);
     }
 
     @Override
@@ -216,6 +218,9 @@ public class PersonalPage extends Fragment {
             firebaseAuth.signOut();
             Intent at = new Intent(getActivity(), MainActivity.class);
             startActivity(at);
+        }else if (id == R.id.action_add_post) {
+            startActivity(new Intent(getActivity(), AddPostActivity.class));
+
         }
 
         return super.onOptionsItemSelected(item);
