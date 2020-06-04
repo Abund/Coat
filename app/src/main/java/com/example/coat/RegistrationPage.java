@@ -175,6 +175,7 @@ public class RegistrationPage extends AppCompatActivity {
                             String timeStamp= String.valueOf(System.currentTimeMillis());
                             user.setOnlineStatus(timeStamp);
                             user.setTypingTo("noOne");
+                            user.setImageUrl("");
 
                             myRef.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).setValue(user).addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
@@ -333,6 +334,7 @@ public class RegistrationPage extends AppCompatActivity {
             String timeStamp= String.valueOf(System.currentTimeMillis());
             user.setOnlineStatus(timeStamp);
             user.setTypingTo("noOne");
+            user.setImageUrl("");
 
             myRef.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).setValue(user).addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override

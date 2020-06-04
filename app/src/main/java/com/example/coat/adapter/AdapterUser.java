@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.coat.MessageActivity;
 import com.example.coat.R;
 import com.example.coat.model.User;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -41,11 +42,14 @@ public class AdapterUser extends RecyclerView.Adapter<AdapterUser.MyHolder>{
         String firstName= userList.get(position).getFirstName();
         String lastName= userList.get(position).getLastName();
         final String email= userList.get(position).getEmail();
+        String image= userList.get(position).getImageUrl();
 
         holder.nNameTv.setText(firstName+" "+lastName);
         holder.mEmailTv.setText(email);
         try{
-
+            Picasso.get().load(image)
+                    .placeholder(R.drawable.ic_account_circle_black_24dp)
+                    .into(holder.mAvatar);
         }catch (Exception e){
 
         }

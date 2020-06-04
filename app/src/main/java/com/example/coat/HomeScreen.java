@@ -40,6 +40,7 @@ import com.example.coat.notifications.Token;
 import com.facebook.login.LoginManager;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
@@ -60,6 +61,7 @@ import com.squareup.picasso.Picasso;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class HomeScreen extends AppCompatActivity
@@ -77,6 +79,7 @@ public class HomeScreen extends AppCompatActivity
     private  static final String TAG="HomeScreenActivity";
 
     String mUID;
+    FirebaseUser user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,7 +120,7 @@ public class HomeScreen extends AppCompatActivity
         builder.setView(listView);
         final AlertDialog dialog=builder.create();
 
-        final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        user = FirebaseAuth.getInstance().getCurrentUser();
         if (user!=null){
             if(user.getPhotoUrl()!=null){
 //                Glide.with(this)
@@ -274,6 +277,30 @@ public class HomeScreen extends AppCompatActivity
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                         getDownloadUrl(reference);
+                        // saves the user photo url to the database
+//                        Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
+//                        while(!uriTask.isSuccessful());
+//                        Uri downloadUri = uriTask.getResult();
+//                        if(uriTask.isSuccessful()){
+//                            HashMap<String,Object> results = new HashMap<>();
+//                            results.put("imageUrl",downloadUri.toString());
+//                            myRef.child(user.getUid()).updateChildren(results)
+//                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+//                                        @Override
+//                                        public void onSuccess(Void aVoid) {
+//
+//                                        }
+//                                    })
+//                                    .addOnFailureListener(new OnFailureListener() {
+//                                        @Override
+//                                        public void onFailure(@NonNull Exception e) {
+//
+//                                        }
+//                                    });
+//                        }else {
+//
+//                        }
+
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {

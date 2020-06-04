@@ -10,12 +10,13 @@ public class User {
     private String uid;
     private String onlineStatus;
     private String typingTo;
+    private String imageUrl;
 
     public User(){
 
     }
 
-    public User(int userId, String firstName, String lastName, String email, String password, String uid,String onlineStatus,String typingTo) {
+    public User(String imageUrl,int userId, String firstName, String lastName, String email, String password, String uid,String onlineStatus,String typingTo) {
         this.userId = userId;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -24,6 +25,7 @@ public class User {
         this.uid = uid;
         this.onlineStatus=onlineStatus;
         this.typingTo=typingTo;
+        this.imageUrl=imageUrl;
     }
 
     public int getUserId() {
@@ -85,8 +87,15 @@ public class User {
     public String getTypingTo() {
         return typingTo;
     }
-
     public void setTypingTo(String typingTo) {
         this.typingTo = typingTo;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }
