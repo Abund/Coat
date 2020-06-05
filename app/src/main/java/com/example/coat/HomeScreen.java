@@ -6,12 +6,16 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
+import androidx.core.view.MenuItemCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -19,8 +23,10 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -30,11 +36,13 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.coat.adapter.AdapterPost;
 import com.example.coat.fragments.BlogPost;
 import com.example.coat.fragments.ChatRooms;
 import com.example.coat.fragments.Chats;
 import com.example.coat.fragments.PersonalPage;
 import com.example.coat.fragments.ViewPsychologist;
+import com.example.coat.model.Post;
 import com.example.coat.model.User;
 import com.example.coat.notifications.Token;
 import com.facebook.login.LoginManager;
@@ -81,6 +89,10 @@ public class HomeScreen extends AppCompatActivity
     String mUID;
     FirebaseUser user;
 
+    RecyclerView recyclerView;
+    List<Post> postList;
+    AdapterPost adapterPost;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -88,6 +100,16 @@ public class HomeScreen extends AppCompatActivity
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+
+        recyclerView = findViewById(R.id.postRecyclerView);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        linearLayoutManager.setStackFromEnd(true);
+        linearLayoutManager.setReverseLayout(true);
+        recyclerView.setLayoutManager(linearLayoutManager);
+
+        postList= new ArrayList<>();
+        loadPost();
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference databaseReference=database.getReference("users");
@@ -208,6 +230,52 @@ public class HomeScreen extends AppCompatActivity
 
     }
 
+    private void loadPost() {
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Post");
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                postList.clear();
+                for(DataSnapshot ds:dataSnapshot.getChildren()){
+                    Post post = ds.getValue(Post.class);
+                    postList.add(post);
+
+                    adapterPost = new AdapterPost(HomeScreen.this,postList);
+                    recyclerView.setAdapter(adapterPost);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Toast.makeText(HomeScreen.this,""+databaseError.getMessage(),Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void searchPost(final String search){
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Post");
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                postList.clear();
+                for(DataSnapshot ds:dataSnapshot.getChildren()){
+                    Post post = ds.getValue(Post.class);
+
+                    if(post.getpTitle().toLowerCase().contains(search.toLowerCase())||post.getpDescr().toLowerCase().contains(search.toLowerCase())){
+                        postList.add(post);
+                    }
+                    adapterPost = new AdapterPost(HomeScreen.this,postList);
+                    recyclerView.setAdapter(adapterPost);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Toast.makeText(HomeScreen.this,""+databaseError.getMessage(),Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
     public void updateToken(String token){
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Tokens");
         Token mToken = new Token(token);
@@ -278,28 +346,28 @@ public class HomeScreen extends AppCompatActivity
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                         getDownloadUrl(reference);
                         // saves the user photo url to the database
-//                        Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
-//                        while(!uriTask.isSuccessful());
-//                        Uri downloadUri = uriTask.getResult();
-//                        if(uriTask.isSuccessful()){
-//                            HashMap<String,Object> results = new HashMap<>();
-//                            results.put("imageUrl",downloadUri.toString());
-//                            myRef.child(user.getUid()).updateChildren(results)
-//                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-//                                        @Override
-//                                        public void onSuccess(Void aVoid) {
-//
-//                                        }
-//                                    })
-//                                    .addOnFailureListener(new OnFailureListener() {
-//                                        @Override
-//                                        public void onFailure(@NonNull Exception e) {
-//
-//                                        }
-//                                    });
-//                        }else {
-//
-//                        }
+                        Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
+                        while(!uriTask.isSuccessful());
+                        Uri downloadUri = uriTask.getResult();
+                        if(uriTask.isSuccessful()){
+                            HashMap<String,Object> results = new HashMap<>();
+                            results.put("imageUrl",downloadUri.toString());
+                            myRef.child(user.getUid()).updateChildren(results)
+                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+
+                                        }
+                                    })
+                                    .addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+
+                                        }
+                                    });
+                        }else {
+
+                        }
 
                     }
                 })
@@ -375,9 +443,6 @@ public class HomeScreen extends AppCompatActivity
             Fragment newFragment =  new ChatRooms();
             replaceFragment(newFragment);
 
-        }else if (id == R.id.action_add_post) {
-            startActivity(new Intent(HomeScreen.this,AddPostActivity.class));
-
         }
         else if (id == R.id.sign_out) {
 
@@ -406,5 +471,59 @@ public class HomeScreen extends AppCompatActivity
 
         // Commit the Fragment replace action.
         fragmentTransaction.addToBackStack(null).commit();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.homescreen, menu);
+        //menu.findItem(R.id.action_search).setVisible(false);
+        MenuItem item = menu.findItem(R.id.action_search);
+        SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                if(!TextUtils.isEmpty(query)){
+                    searchPost(query);
+                }else {
+                    loadPost();
+                }
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                if(!TextUtils.isEmpty(newText)){
+                    searchPost(newText);
+                }else {
+                    loadPost();
+                }
+                return false;
+            }
+        });
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            firebaseAuth = FirebaseAuth.getInstance();
+            LoginManager.getInstance().logOut();
+            firebaseAuth.signOut();
+            Intent at = new Intent(this, MainActivity.class);
+            startActivity(at);
+        }else if (id == R.id.action_add_post) {
+            startActivity(new Intent(HomeScreen.this, AddPostActivity.class));
+
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }

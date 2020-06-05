@@ -40,6 +40,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -116,6 +117,7 @@ public class MessageActivity extends AppCompatActivity {
                     String email =""+ ds.child("email").getValue();
                     String onlineStatus=""+ ds.child("onlineStatus").getValue();
                     String typingStatus =""+ ds.child("typingTo").getValue();
+                    String image =""+ ds.child("imageUrl").getValue();
                     if(typingStatus.equals(myUid)){
                         userStatusTv.setText("typing...");
                     }else {
@@ -129,6 +131,13 @@ public class MessageActivity extends AppCompatActivity {
                         }
                     }
                     nameTv.setText(UserName);
+                    try{
+                        Picasso.get().load(image)
+                                .placeholder(R.drawable.ic_account_circle_black_24dp)
+                                .into(imageView);
+                    }catch (Exception e){
+
+                    }
                 }
             }
 

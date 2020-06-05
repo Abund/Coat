@@ -99,7 +99,7 @@ public class AddPostActivity extends AppCompatActivity {
                 for(DataSnapshot ds: dataSnapshot.getChildren()){
                     name=""+ds.child("firstName").getValue();
                     email=""+ds.child("email").getValue();
-                    dp=""+ds.child("image").getValue();
+                    dp=""+ds.child("imageUrl").getValue();
                 }
             }
 
@@ -167,7 +167,7 @@ public class AddPostActivity extends AppCompatActivity {
                                 hashMap.put("pId",timeStamp);
                                 hashMap.put("pTitle",title);
                                 hashMap.put("pDescr",description);
-                                hashMap.put("PImage",downloadUri);
+                                hashMap.put("pImage",downloadUri);
                                 hashMap.put("pTime",timeStamp);
 
 
@@ -210,7 +210,7 @@ public class AddPostActivity extends AppCompatActivity {
             hashMap.put("pId",timeStamp);
             hashMap.put("pTitle",title);
             hashMap.put("pDescr",description);
-            hashMap.put("PImage","noImage");
+            hashMap.put("pImage","noImage");
             hashMap.put("pTime",timeStamp);
 
 
@@ -356,7 +356,6 @@ public class AddPostActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        menu.findItem(R.id.action_add_post).setVisible(false);
         return super.onCreateOptionsMenu(menu);
     }
 
