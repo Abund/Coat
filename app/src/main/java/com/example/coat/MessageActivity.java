@@ -233,6 +233,7 @@ public class MessageActivity extends AppCompatActivity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.homescreen,menu);
         menu.findItem(R.id.action_search).setVisible(false);
+        menu.findItem(R.id.action_add_post).setVisible(false);
         return super.onCreateOptionsMenu(menu);
     }
 

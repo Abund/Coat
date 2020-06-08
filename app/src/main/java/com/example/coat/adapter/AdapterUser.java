@@ -1,6 +1,8 @@
 package com.example.coat.adapter;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.coat.MessageActivity;
 import com.example.coat.R;
+import com.example.coat.ThereProfileActivity;
 import com.example.coat.model.User;
 import com.squareup.picasso.Picasso;
 
@@ -61,6 +64,24 @@ public class AdapterUser extends RecyclerView.Adapter<AdapterUser.MyHolder>{
                 Intent intent= new Intent(context, MessageActivity.class);
                 intent.putExtra("hisUid",hisUid);
                 context.startActivity(intent);
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                builder.setItems(new String[]{"Profile", "Chat"}, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        if(i==0){
+                            Intent intent = new Intent(context, ThereProfileActivity.class);
+                            intent.putExtra("uid",hisUid);
+                            context.startActivity(intent);
+                        }
+                        if(i==1){
+                            Intent intent= new Intent(context, MessageActivity.class);
+                            intent.putExtra("hisUid",hisUid);
+                            context.startActivity(intent);
+                        }
+                    }
+                });
+                builder.create().show();
             }
         });
     }

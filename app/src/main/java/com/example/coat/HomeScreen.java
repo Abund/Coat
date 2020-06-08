@@ -5,7 +5,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
@@ -26,7 +25,6 @@ import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -40,6 +38,7 @@ import com.example.coat.adapter.AdapterPost;
 import com.example.coat.fragments.BlogPost;
 import com.example.coat.fragments.ChatRooms;
 import com.example.coat.fragments.Chats;
+import com.example.coat.fragments.HomeFragment;
 import com.example.coat.fragments.PersonalPage;
 import com.example.coat.fragments.ViewPsychologist;
 import com.example.coat.model.Post;
@@ -419,8 +418,10 @@ public class HomeScreen extends AppCompatActivity
 
         if (id == R.id.nav_home) {
             // Handle the camera action
-            Intent at = new Intent(HomeScreen.this, HomeScreen.class);
-            startActivity(at);
+            Fragment newFragment =  new HomeFragment();
+//            FragmentTransaction ft = getFragmentManager().beginTransaction();
+//            ft.add(R.id.content_frame, newFragment).commit();
+            replaceFragment(newFragment);
         } else if (id == R.id.nav_personalPage) {
             Fragment newFragment =  new PersonalPage();
 //            FragmentTransaction ft = getFragmentManager().beginTransaction();
