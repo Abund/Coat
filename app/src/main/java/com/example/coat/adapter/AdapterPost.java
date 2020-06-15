@@ -285,9 +285,9 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder>{
                 }
                 else if (id==2){
                     //start PostDetailActivity
-                    Intent intent = new Intent(context, PostDetailActivity.class);
-                    intent.putExtra("postId", pId); //will get detail of post using this id, its id of the post clicked
-                    context.startActivity(intent);
+//                    Intent intent = new Intent(context, PostDetailActivity.class);
+//                    intent.putExtra("postId", pId); //will get detail of post using this id, its id of the post clicked
+//                    context.startActivity(intent);
                 }
                 return false;
             }
