@@ -20,6 +20,7 @@ import androidx.appcompat.widget.PopupMenu;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.coat.AddPostActivity;
+import com.example.coat.PostDetailActivity;
 import com.example.coat.R;
 import com.example.coat.ThereProfileActivity;
 import com.example.coat.model.Post;
@@ -285,9 +286,9 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder>{
                 }
                 else if (id==2){
                     //start PostDetailActivity
-//                    Intent intent = new Intent(context, PostDetailActivity.class);
-//                    intent.putExtra("postId", pId); //will get detail of post using this id, its id of the post clicked
-//                    context.startActivity(intent);
+                    Intent intent = new Intent(context, PostDetailActivity.class);
+                    intent.putExtra("postId", pId); //will get detail of post using this id, its id of the post clicked
+                    context.startActivity(intent);
                 }
                 return false;
             }
