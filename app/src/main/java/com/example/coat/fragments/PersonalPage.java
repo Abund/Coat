@@ -25,7 +25,9 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.SearchView;
 import androidx.core.content.ContextCompat;
+import androidx.core.view.MenuItemCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -39,6 +41,7 @@ import com.example.coat.model.Post;
 import com.facebook.login.LoginManager;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -49,10 +52,13 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
 import java.util.HashMap;
 import java.util.List;
+
+import static android.app.Activity.RESULT_OK;
 
 public class PersonalPage extends Fragment {
 
@@ -176,15 +182,118 @@ public class PersonalPage extends Fragment {
         return view;
     }
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstances){
+        setHasOptionsMenu(true);
+        super.onCreate(savedInstances);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        inflater.inflate(R.menu.homescreen, menu);
+        super.onCreateOptionsMenu(menu,inflater);
+        MenuItem item = menu.findItem(R.id.action_search);
+
+        //v7 searchview ot search user specific posts
+        SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                //called when user press search button
+                if (!TextUtils.isEmpty(s)) {
+                    //search
+                    searchMyPosts(s);
+                } else {
+                    loadMyPosts();
+                }
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                //called whenever user type any letter
+                if (!TextUtils.isEmpty(s)) {
+                    //search
+                    searchMyPosts(s);
+                } else {
+                    loadMyPosts();
+                }
+                return false;
+            }
+        });
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            firebaseAuth = FirebaseAuth.getInstance();
+            LoginManager.getInstance().logOut();
+            firebaseAuth.signOut();
+            Intent at = new Intent(getActivity(), MainActivity.class);
+            startActivity(at);
+        }else if (id == R.id.action_add_post) {
+            startActivity(new Intent(getActivity(), AddPostActivity.class));
+
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        /*This method will be called after picking image from Camera or Gallery*/
+        if (resultCode == RESULT_OK) {
+
+            if (requestCode == IMAGE_PICK_GALLERY_CODE) {
+                //image is picked from gallery, get uri of image
+                image_uri = data.getData();
+
+                uploadProfileCoverPhoto(image_uri);
+            }
+            if (requestCode == IMAGE_PICK_CAMERA_CODE) {
+                //image is picked from camera, get uri of image
+
+                uploadProfileCoverPhoto(image_uri);
+
+            }
+
+        }
+
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+    }
+
     private void showEditProfileDialogue() {
-        String options[] = {"Edit first name","Edit last name","Edit address","Edit user name"};
+        String options[] = {"Edit Profile Picture", "Edit Cover Photo","Edit first name","Edit last name","Edit address","Edit user name"};
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle("Choose Action");
         builder.setCancelable(true);
         builder.setItems(options, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                if(i==0){
+                if (i == 0) {
+                    //Edit Profile clicked
+                    progressDialog.setMessage("Updating Profile Picture");
+                    profileOrCoverPhoto = "image"; //i.e. changing profile picture, make sure to assign same value
+                    showImagePicDialog();
+                } else if (i == 1) {
+                    //Edit Cover clicked
+                    progressDialog.setMessage("Updating Cover Photo");
+                    profileOrCoverPhoto = "cover"; //i.e. changing cover photo, make sure to assign same value
+                    showImagePicDialog();
+                }else if(i==0){
                     progressDialog.setMessage("Updating first name");
                     showFirstNameUpdateDialogue("firstName");
 
@@ -257,48 +366,6 @@ public class PersonalPage extends Fragment {
         builder.create().show();
     }
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstances){
-        setHasOptionsMenu(true);
-        super.onCreate(savedInstances);
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        inflater.inflate(R.menu.homescreen, menu);
-        super.onCreateOptionsMenu(menu,inflater);
-        menu.findItem(R.id.action_search).setVisible(false);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            firebaseAuth = FirebaseAuth.getInstance();
-            LoginManager.getInstance().logOut();
-            firebaseAuth.signOut();
-            Intent at = new Intent(getActivity(), MainActivity.class);
-            startActivity(at);
-        }else if (id == R.id.action_add_post) {
-            startActivity(new Intent(getActivity(), AddPostActivity.class));
-
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-    }
-
     private void loadMyPosts() {
         //linear layout for recyclerview
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
@@ -309,7 +376,7 @@ public class PersonalPage extends Fragment {
         postsRecyclerView.setLayoutManager(layoutManager);
 
         //init posts list
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Post");
         //qurey to load posts
         /*whenever user publishes a post the uid of this user is also saved as info of post
          * so we're retrieving posts having uid equals to uid of current user*/
@@ -441,4 +508,185 @@ public class PersonalPage extends Fragment {
                 == (PackageManager.PERMISSION_GRANTED);
         return result;
     }
+
+    private void uploadProfileCoverPhoto(final Uri uri) {
+        //show progress
+        progressDialog.show();
+
+        /*Instead of creating separate function for Profile Picture and Cover Photo
+         * i'm doing work for both in same function
+         *
+         * To add check ill add a string variable and assign it value "image" when user clicks
+         * "Edit Profile Pic", and assign it value "cover" when user clicks "Edit Cover Photo"
+         * Here: image is the key in each user containing url of user's profile picture
+         *       cover is the key in each user containing url of user's cover photo */
+
+        /*The parameter "image_uri" contains the uri of image picked either from camera or gallery
+         * We will use UID of the currently signed in user as name of the image so there will be only one image for
+         * profile and one image for cover for each user*/
+
+        //path and name of image to be stored in firebase storage
+        //e.g. Users_Profile_Cover_Imgs/image_e12f3456f789.jpg
+        //e.g. Users_Profile_Cover_Imgs/cover_c123n4567g89.jpg
+        String filePathAndName = storagePath + "" + profileOrCoverPhoto + "_" + user.getUid();
+
+        StorageReference storageReference2nd = storageReference.child(filePathAndName);
+        storageReference2nd.putFile(uri)
+                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        //image is uploaded to storage, now get it's url and store in user's database
+                        Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
+                        while (!uriTask.isSuccessful()) ;
+                        final Uri downloadUri = uriTask.getResult();
+
+                        //check if image is uploaded or not and url is received
+                        if (uriTask.isSuccessful()) {
+                            //image uploaded
+                            //add/update url in user's database
+                            HashMap<String, Object> results = new HashMap<>();
+                            /*First Parameter is profileOrCoverPhoto that has value "image" or "cover"
+                              which are keys in user's database where url of image will be saved in one
+                              of them
+                              Second Parameter contains the url of the image stored in firebase storage, this
+                              url will be saved as value against key "image" or "cover"*/
+                            results.put(profileOrCoverPhoto, downloadUri.toString());
+
+                            databaseReference.child(user.getUid()).updateChildren(results)
+                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                            //url in database of user is added successfully
+                                            //dismiss progress bar
+                                            progressDialog.dismiss();
+                                            Toast.makeText(getActivity(), "Image Updated...", Toast.LENGTH_SHORT).show();
+                                        }
+                                    })
+                                    .addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            //error adding url in database of user
+                                            //dismiss progress bar
+                                            progressDialog.dismiss();
+                                            Toast.makeText(getActivity(), "Erro Updating Image...", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+
+                            //if user edit his name, also change it from hist posts
+                            if (profileOrCoverPhoto.equals("image")) {
+                                DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
+                                Query query = ref.orderByChild("uid").equalTo(uid);
+                                query.addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                        for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                                            String child = ds.getKey();
+                                            dataSnapshot.getRef().child(child).child("uDp").setValue(downloadUri.toString());
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                    }
+                                });
+
+                                //update user image in current users comments on posts
+                                ref.addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                        for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                                            String child = ds.getKey();
+                                            if (dataSnapshot.child(child).hasChild("Comments")) {
+                                                String child1 = "" + dataSnapshot.child(child).getKey();
+                                                Query child2 = FirebaseDatabase.getInstance().getReference("Posts").child(child1).child("Comments").orderByChild("uid").equalTo(uid);
+                                                child2.addValueEventListener(new ValueEventListener() {
+                                                    @Override
+                                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                        for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                                                            String child = ds.getKey();
+                                                            dataSnapshot.getRef().child(child).child("uDp").setValue(downloadUri.toString());
+                                                        }
+                                                    }
+
+                                                    @Override
+                                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                                    }
+                                                });
+                                            }
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                    }
+                                });
+                            }
+
+                        } else {
+                            //error
+                            progressDialog.dismiss();
+                            Toast.makeText(getActivity(), "Some error occured", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        //there were some error(s), get and show error message, dismiss progress dialog
+                        progressDialog.dismiss();
+                        Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+
+    }
+
+    private void searchMyPosts(final String searchQuery) {
+        //linear layout for recyclerview
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        //show newest post first, for this load from last
+        layoutManager.setStackFromEnd(true);
+        layoutManager.setReverseLayout(true);
+        //set this layout to recyclerview
+        postsRecyclerView.setLayoutManager(layoutManager);
+
+        //init posts list
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
+        //qurey to load posts
+        /*whenever user publishes a post the uid of this user is also saved as info of post
+         * so we're retrieving posts having uid equals to uid of current user*/
+        Query query = ref.orderByChild("uid").equalTo(uid);
+        //get all data from this ref
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                postList.clear();
+                for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                    Post myPosts = ds.getValue(Post.class);
+
+
+                    if (myPosts.getpTitle().toLowerCase().contains(searchQuery.toLowerCase()) ||
+                            myPosts.getpDescr().toLowerCase().contains(searchQuery.toLowerCase())) {
+                        //add to list
+                        postList.add(myPosts);
+                    }
+
+                    //adapter
+                    adapterPosts = new AdapterPost(getActivity(), postList);
+                    //set this adapter to recyclerview
+                    postsRecyclerView.setAdapter(adapterPosts);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Toast.makeText(getActivity(), "" + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+
 }
