@@ -753,11 +753,11 @@ public class AddPostActivity extends AppCompatActivity {
                                 hashMap.put("pDescr", description);
                                 hashMap.put("pImage", downloadUri);
                                 hashMap.put("pTime", timeStamp);
-//                                hashMap.put("pLikes", "0");
-//                                hashMap.put("pComments", "0");
+                                hashMap.put("pLikes", "0");
+                                hashMap.put("pComments", "0");
 
                                 //path to store post data
-                                DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
+                                DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Post");
                                 //put data in this ref
                                 ref.child(timeStamp).setValue(hashMap)
                                         .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -823,7 +823,7 @@ public class AddPostActivity extends AppCompatActivity {
             hashMap.put("pComments", "0");
 
             //path to store post data
-            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
+            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Post");
             //put data in this ref
             ref.child(timeStamp).setValue(hashMap)
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
