@@ -1,20 +1,21 @@
 package com.example.coat.model;
 
 public class Post {
-    String pid,pTitle,pDescr,pImage,pTime,uid,uEmail,uDp,uName;
+    String pid,pTitle,pLikes,pDescr,pImage,pTime,uid,uEmail,uDp,uName;
 
     public Post() {
     }
 
-    public Post(String pid, String pTitle, String pDescr, String pImage, String pTime, String uid, String uEmail, String uDpd, String uName) {
+    public Post(String pid, String pTitle, String pLikes, String pDescr, String pImage, String pTime, String uid, String uEmail, String uDp, String uName) {
         this.pid = pid;
         this.pTitle = pTitle;
+        this.pLikes = pLikes;
         this.pDescr = pDescr;
         this.pImage = pImage;
         this.pTime = pTime;
         this.uid = uid;
         this.uEmail = uEmail;
-        this.uDp = uDpd;
+        this.uDp = uDp;
         this.uName = uName;
     }
 
@@ -32,6 +33,14 @@ public class Post {
 
     public void setpTitle(String pTitle) {
         this.pTitle = pTitle;
+    }
+
+    public String getpLikes() {
+        return pLikes;
+    }
+
+    public void setpLikes(String pLikes) {
+        this.pLikes = pLikes;
     }
 
     public String getpDescr() {
@@ -78,8 +87,8 @@ public class Post {
         return uDp;
     }
 
-    public void setuDp(String uDpd) {
-        this.uDp = uDpd;
+    public void setuDp(String uDp) {
+        this.uDp = uDp;
     }
 
     public String getuName() {

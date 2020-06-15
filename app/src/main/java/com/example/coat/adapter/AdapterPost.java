@@ -60,6 +60,8 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder>{
         this.context = context;
         this.postList=postList;
         myUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        likesRef = FirebaseDatabase.getInstance().getReference().child("Likes");
+        postsRef = FirebaseDatabase.getInstance().getReference().child("Post");
     }
 
     @NonNull
@@ -70,7 +72,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder>{
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final MyHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final MyHolder holder, final int position) {
 
         final String uid= postList.get(position).getUid();
         String email= postList.get(position).getuEmail();
@@ -81,6 +83,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder>{
         String pDescription= postList.get(position).getpDescr();
         final String pImage= postList.get(position).getpImage();
         String pTimeStamp= postList.get(position).getpTime();
+        String pLikes = postList.get(position).getpLikes(); //contains total number of likes for a post
 
         Calendar calendar = Calendar.getInstance(Locale.getDefault());
         calendar.setTimeInMillis(Long.parseLong(pTimeStamp));
@@ -90,6 +93,10 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder>{
         holder.pTimeTv.setText(time);
         holder.pTitleTv.setText(pTitle);
         holder.pDescriptionTv.setText(pDescription);
+        holder.likeBtn.setText(pLikes+" Likes");
+
+        //set likes for each post
+        setLikes(holder, pid);
 
         if(pImage.equals("noImage")){
             holder.pImageIv.setVisibility(View.GONE);
@@ -125,7 +132,39 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder>{
         holder.likeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(context,"Like ",Toast.LENGTH_SHORT).show();
+                //get total number of likes for the post, whose like button clicked
+                //if currently signed in user has not liked it before
+                //increase value by 1, otherwise decrease value by 1
+                final int pLikes = Integer.parseInt(postList.get(position).getpLikes());
+                mProcessLike = true;
+                //get id of the post clicked
+                final String postIde = postList.get(position).getPid();
+                likesRef.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (mProcessLike){
+                            if (dataSnapshot.child(postIde).hasChild(myUid)){
+                                //already liked, so remove like
+                                postsRef.child(postIde).child("pLikes").setValue(""+(pLikes-1));
+                                likesRef.child(postIde).child(myUid).removeValue();
+                                mProcessLike = false;
+                            }
+                            else {
+                                // not liked, like it
+                                postsRef.child(postIde).child("pLikes").setValue(""+(pLikes+1));
+                                likesRef.child(postIde).child(myUid).setValue("Liked"); //set any value
+                                mProcessLike = false;
+
+                                addToHisNotifications(""+uid, ""+pid, "Liked your post");
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
             }
         });
 
@@ -156,6 +195,63 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder>{
     @Override
     public int getItemCount() {
         return postList.size();
+    }
+
+    private void setLikes(final MyHolder holder, final String postKey) {
+        likesRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.child(postKey).hasChild(myUid)){
+                    //user has liked this post
+                    /*To indicate that the post is liked by this(SignedIn) user
+                    Change drawable left icon of like button
+                    Change text of like button from "Like" to "Liked"*/
+                    holder.likeBtn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_thumb_liked, 0,0,0);
+                    holder.likeBtn.setText("Liked");
+                }
+                else {
+                    //user has not liked this post
+                    /*To indicate that the post is not liked by this(SignedIn) user
+                    Change drawable left icon of like button
+                    Change text of like button from "Liked" to "Like"*/
+                    holder.likeBtn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_thumb_up_black_24dp, 0,0,0);
+                    holder.likeBtn.setText("Like");
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void addToHisNotifications(String hisUid, String pId, String notification){
+        //timestamp for time and notification id
+        String timestamp = ""+System.currentTimeMillis();
+
+        //data to put in notification in firebase
+        HashMap<Object, String> hashMap = new HashMap<>();
+        hashMap.put("pId", pId);
+        hashMap.put("timestamp", timestamp);
+        hashMap.put("pUid", hisUid);
+        hashMap.put("notification", notification);
+        hashMap.put("sUid", myUid);
+
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
+        ref.child(hisUid).child("Notifications").child(timestamp).setValue(hashMap)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        //added successfully
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        //failed
+                    }
+                });
     }
 
     private void showMoreOptions(ImageButton moreBtn, String uid, String myUid, final String pId, final String pImage) {
