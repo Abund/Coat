@@ -75,7 +75,7 @@ public class HomeScreen extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener  {
 
     private TextView clientName,profileName;
-    private ImageView imageViewCalories,imageViewBloodPressure,imageViewBloodSugar,imageViewProfile,imageViewHomePageProfile,imageViewGo;
+    private ImageView imageViewProfile;
     FirebaseAuth firebaseAuth;
     FirebaseUser userf;
     DatabaseReference myRef;
@@ -128,6 +128,10 @@ public class HomeScreen extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
         firebaseAuth =FirebaseAuth.getInstance();
         userf=firebaseAuth.getCurrentUser();
+
+
+        Fragment newFragment =  new HomeFragment();
+        replaceFragment(newFragment);
 
         ListView listView = new ListView(this);
         List<String> data = new ArrayList<>();

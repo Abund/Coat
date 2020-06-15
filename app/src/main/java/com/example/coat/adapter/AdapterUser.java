@@ -61,9 +61,6 @@ public class AdapterUser extends RecyclerView.Adapter<AdapterUser.MyHolder>{
             @Override
             public void onClick(View view) {
 //                Toast.makeText(context,""+email,Toast.LENGTH_SHORT).show();
-                Intent intent= new Intent(context, MessageActivity.class);
-                intent.putExtra("hisUid",hisUid);
-                context.startActivity(intent);
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(context);
                 builder.setItems(new String[]{"Profile", "Chat"}, new DialogInterface.OnClickListener() {

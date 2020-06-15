@@ -1,11 +1,9 @@
 package com.example.coat.fragments;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -13,17 +11,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.coat.MainActivity;
 import com.example.coat.R;
 import com.example.coat.adapter.AdapterPost;
 import com.example.coat.model.Post;
-import com.example.coat.model.User;
 import com.example.coat.notifications.Token;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -113,21 +106,9 @@ public class HomeFragment extends Fragment {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference databaseReference=database.getReference("users");
         databaseReference.keepSynced(true);
-        myRef = FirebaseDatabase.getInstance().getReference().child("users");
 
         firebaseAuth =FirebaseAuth.getInstance();
         userf=firebaseAuth.getCurrentUser();
-
-        ListView listView = new ListView(getActivity());
-        List<String> data = new ArrayList<>();
-        data.add("Camera");
-        data.add("Gallery");
-        final ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(),android.R.layout.simple_list_item_1,data);
-        listView.setAdapter(adapter);
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setCancelable(true);
-        builder.setView(listView);
 
         user = FirebaseAuth.getInstance().getCurrentUser();
 
