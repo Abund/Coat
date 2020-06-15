@@ -228,8 +228,7 @@ public class HomeScreen extends AppCompatActivity
         });
 
         checkUserStatus();
-        //update token
-        updateToken(FirebaseInstanceId.getInstance().getToken());
+
 
     }
 
@@ -299,6 +298,9 @@ public class HomeScreen extends AppCompatActivity
             SharedPreferences.Editor editor = sp.edit();
             editor.putString("Current_USERID",mUID);
             editor.apply();
+
+            //update token
+            updateToken(FirebaseInstanceId.getInstance().getToken());
         }else{
             Intent at = new Intent(HomeScreen.this, MainActivity.class);
             startActivity(at);
