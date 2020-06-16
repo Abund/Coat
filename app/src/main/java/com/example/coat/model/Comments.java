@@ -3,10 +3,10 @@ package com.example.coat.model;
 public class Comments {
     String cId, comment, timestamp, uid, uEmail, uDp, uName;
 
-    public ModelComment() {
+    public Comments() {
     }
 
-    public ModelComment(String cId, String comment, String timestamp, String uid, String uEmail, String uDp, String uName) {
+    public Comments(String cId, String comment, String timestamp, String uid, String uEmail, String uDp, String uName) {
         this.cId = cId;
         this.comment = comment;
         this.timestamp = timestamp;
