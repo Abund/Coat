@@ -43,14 +43,14 @@
             </intent-filter>
         </activity>
 
-        <service
-            android:name=".notifications.FirebaseService"
-            android:enabled="true"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="com.google.firebase.INSTANCE_ID_SERVICE" />
-            </intent-filter>
-        </service>
+<!--        <service-->
+<!--            android:name=".notifications.FirebaseService"-->
+<!--            android:enabled="true"-->
+<!--            android:exported="true">-->
+<!--            <intent-filter>-->
+<!--                <action android:name="com.google.firebase.INSTANCE_ID_SERVICE" />-->
+<!--            </intent-filter>-->
+<!--        </service>-->
         <service
             android:name=".notifications.FirebaseMessaging"
             android:enabled="true"
@@ -59,6 +59,24 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
+
+        <!--
+ Set the android:exported attribute to false;
+         the FileProvider does not need to be public.
+        -->
+        <!--
+ Set the android:grantUriPermissions attribute to true,
+             to allow you to grant temporary access to files.
+        -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.blogspot.atifsoftwares.firebaseapp.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/paths" />
+        </provider>
     </application>
 
 </manifest>
