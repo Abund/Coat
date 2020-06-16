@@ -44,8 +44,6 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
-import org.w3c.dom.Comment;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
@@ -75,7 +73,7 @@ public class PostDetailActivity extends AppCompatActivity {
     LinearLayout profileLayout;
     RecyclerView recyclerView;
 
-    List<Comment> commentList;
+    List<Comments> commentList;
     AdapterComment adapterComments;
 
     //add comments views
@@ -275,7 +273,7 @@ public class PostDetailActivity extends AppCompatActivity {
         commentList = new ArrayList<>();
 
         //path of the post, to get it's comments
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts").child(postId).child("Comments");
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Post").child(postId).child("Comments");
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
