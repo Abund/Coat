@@ -12,8 +12,8 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
@@ -22,16 +22,19 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.example.coat.adapter.AdapterChat;
 import com.example.coat.model.Chats;
 import com.example.coat.model.User;
-import com.example.coat.notifications.APIService;
 import com.example.coat.notifications.Client;
 import com.example.coat.notifications.Data;
-import com.example.coat.notifications.Response;
 import com.example.coat.notifications.Sender;
 import com.example.coat.notifications.Token;
-import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -40,13 +43,18 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -74,8 +82,10 @@ public class MessageActivity extends AppCompatActivity {
     String myUid;
     String hisImage;
 
-    APIService apiService;
-    boolean notify =false;
+
+    //volley request queue for notification
+    private RequestQueue requestQueue;
+    private boolean notify =false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,7 +102,8 @@ public class MessageActivity extends AppCompatActivity {
         messageEt= findViewById(R.id.messageEt);
         imageButton= findViewById(R.id.sendBtn);
 
-        apiService = Client.getRetrofit("https://fcm.googleapis.com/").create(APIService.class);
+        requestQueue = Volley.newRequestQueue(getApplicationContext());
+
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setStackFromEnd(true);
@@ -385,18 +396,40 @@ public class MessageActivity extends AppCompatActivity {
                     Data data = new Data(myUid,firstName+":"+message,"New Message",hisUid,R.drawable.ic_account_circle_black_24dp);
 
                     Sender sender = new Sender(data,token.getToken());
-                    apiService.sendNotification(sender)
-                            .enqueue(new Callback<Response>() {
-                                @Override
-                                public void onResponse(Call<Response> call, retrofit2.Response<Response> response) {
-                                    Toast.makeText(MessageActivity.this,""+response.message(),Toast.LENGTH_SHORT).show();
-                                }
+                    //fcm json object request
+                    try {
+                        JSONObject senderJsonObj = new JSONObject(new Gson().toJson(sender));
+                        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest("https://fcm.googleapis.com/fcm/send", senderJsonObj,
+                                new com.android.volley.Response.Listener<JSONObject>() {
+                                    @Override
+                                    public void onResponse(JSONObject response) {
+                                        //response of the request
+                                        Log.d("JSON_RESPONSE", "onResponse: "+response.toString());
 
-                                @Override
-                                public void onFailure(Call<Response> call, Throwable t) {
+                                    }
+                                }, new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                Log.d("JSON_RESPONSE", "onResponse: "+error.toString());
+                            }
+                        }){
+                            @Override
+                            public Map<String, String> getHeaders() throws AuthFailureError {
+                                //put params
+                                Map<String, String> headers = new HashMap<>();
+                                headers.put("Content-Type", "application/json");
+                                headers.put("Authorization", "key=AAAA9hmQsV0:APA91bGNuFV7B6aiTqYkyh22sA_CKmWo6ur8AxuUbcY-VstAbGdaF-YPVucsUKR37x8i8eUmt93mxhB6ViNIXqz3RpT5ZSuRD4htFDPf0Njm3-el1vV-B52gOHhfCMm5PxOvRUUy87hY");
 
-                                }
-                            });
+                                return headers;
+                            }
+                        };
+
+                        //add this request to queue
+                        requestQueue.add(jsonObjectRequest);
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
 
