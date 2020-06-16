@@ -5,17 +5,19 @@ public class Chats {
     String receiver;
     String sender;
     String timeStamp;
+    String type;
     boolean isSeen;
 
     public Chats() {
     }
 
-    public Chats(String message, String receiver, String sender, String timeStamp,boolean isSeen) {
+    public Chats(String message, String receiver, String sender, String timeStamp,boolean isSeen,String type) {
         this.message = message;
         this.receiver = receiver;
         this.sender = sender;
         this.timeStamp = timeStamp;
         this.isSeen=isSeen;
+        this.type=type;
     }
 
     public String getMessage() {
@@ -56,5 +58,13 @@ public class Chats {
 
     public void setSeen(boolean seen) {
         isSeen = seen;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }
