@@ -1,15 +1,16 @@
 package com.example.coat.model;
 
 public class Post {
-    String pid,pTitle,pLikes,pDescr,pImage,pTime,uid,uEmail,uDp,uName;
+    String pid,pTitle,pLikes,pComments,pDescr,pImage,pTime,uid,uEmail,uDp,uName;
 
     public Post() {
     }
 
-    public Post(String pid, String pTitle, String pLikes, String pDescr, String pImage, String pTime, String uid, String uEmail, String uDp, String uName) {
+    public Post(String pid, String pTitle, String pLikes, String pComments, String pDescr, String pImage, String pTime, String uid, String uEmail, String uDp, String uName) {
         this.pid = pid;
         this.pTitle = pTitle;
         this.pLikes = pLikes;
+        this.pComments = pComments;
         this.pDescr = pDescr;
         this.pImage = pImage;
         this.pTime = pTime;
@@ -41,6 +42,14 @@ public class Post {
 
     public void setpLikes(String pLikes) {
         this.pLikes = pLikes;
+    }
+
+    public String getpComments() {
+        return pComments;
+    }
+
+    public void setpComments(String pComments) {
+        this.pComments = pComments;
     }
 
     public String getpDescr() {
