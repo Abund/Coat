@@ -25,6 +25,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import java.util.Calendar;
 import java.util.HashMap;
@@ -64,21 +66,39 @@ public class AdapterChat extends RecyclerView.Adapter<AdapterChat.MyHolder>{
     public void onBindViewHolder(@NonNull MyHolder holder, final int position) {
         String message = chatsList.get(position).getMessage();
         String timeStamp = chatsList.get(position).getTimeStamp();
+        String type = chatsList.get(position).getType();
 
         Calendar calendar = Calendar.getInstance(Locale.ENGLISH);
         calendar.setTimeInMillis(Long.parseLong(timeStamp));
         String dateTime= DateFormat.format("dd/MM/yyyy hh:mm aa",calendar).toString();
 
+        if (type.equals("text")){
+            //text message
+            holder.message.setVisibility(View.VISIBLE);
+            holder.messageIv.setVisibility(View.GONE);
+
+            holder.message.setText(message);
+        }
+        else {
+            //image message
+            holder.message.setVisibility(View.GONE);
+            holder.messageIv.setVisibility(View.VISIBLE);
+
+            Picasso.get().load(message).placeholder(R.drawable.ic_image_black).into(holder.messageIv);
+        }
         holder.message.setText(message);
         holder.timeStamp.setText(dateTime);
 
-        if(position==chatsList.size()-1) {
-            if(chatsList.get(position).isSeen()){
+        //set seen/delivered status of message
+        if (position==chatsList.size()-1){
+            if (chatsList.get(position).isSeen()){
                 holder.isSeen.setText("Seen");
-            }else {
-                holder.isSeen.setText("Sent");
             }
-        }else {
+            else {
+                holder.isSeen.setText("Delivered");
+            }
+        }
+        else {
             holder.isSeen.setVisibility(View.GONE);
         }
 
@@ -152,7 +172,7 @@ public class AdapterChat extends RecyclerView.Adapter<AdapterChat.MyHolder>{
     }
 
     class MyHolder extends RecyclerView.ViewHolder{
-        ImageView profilePic;
+        ImageView profilePic,messageIv;
         TextView message,timeStamp,isSeen;
         LinearLayout messageLayout;
 
@@ -163,6 +183,7 @@ public class AdapterChat extends RecyclerView.Adapter<AdapterChat.MyHolder>{
             timeStamp= itemView.findViewById(R.id.messageTime1);
             isSeen= itemView.findViewById(R.id.isSeen);
             messageLayout= itemView.findViewById(R.id.messageLayout);
+            messageIv = itemView.findViewById(R.id.messageIv);
         }
     }
 }
