@@ -11,21 +11,10 @@ public class User {
     private String onlineStatus;
     private String typingTo;
     private String imageUrl;
+    boolean isBlocked = false;
 
     public User(){
 
-    }
-
-    public User(String imageUrl,int userId, String firstName, String lastName, String email, String password, String uid,String onlineStatus,String typingTo) {
-        this.userId = userId;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
-        this.password = password;
-        this.uid = uid;
-        this.onlineStatus=onlineStatus;
-        this.typingTo=typingTo;
-        this.imageUrl=imageUrl;
     }
 
     public int getUserId() {
@@ -87,6 +76,7 @@ public class User {
     public String getTypingTo() {
         return typingTo;
     }
+
     public void setTypingTo(String typingTo) {
         this.typingTo = typingTo;
     }
@@ -97,5 +87,13 @@ public class User {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    public boolean isBlocked() {
+        return isBlocked;
+    }
+
+    public void setBlocked(boolean blocked) {
+        isBlocked = blocked;
     }
 }

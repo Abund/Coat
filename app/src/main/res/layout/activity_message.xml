@@ -7,12 +7,18 @@
 
     tools:context=".MessageActivity">
 
+
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?android:attr/actionBarSize"
         android:background="@color/colorPrimaryDark"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+        <!--Receiver profile picture-->
         <com.blogspot.atifsoftwares.circularimageview.CircularImageView
             android:id="@+id/profileIv"
             android:layout_width="35dp"
@@ -21,9 +27,10 @@
             android:scaleType="centerCrop"
             app:c_background_color="@color/colorPrimaryDark"/>
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
+            android:layout_weight="1"
             android:gravity="center"
             android:layout_marginStart="20dp"
             android:layout_marginLeft="20dp">
@@ -44,6 +51,16 @@
                 android:textStyle="bold"
                 android:textColor="@color/colorWhite"/>
 
+        </LinearLayout>
+            <!--Add icons to indicate blocked/unblocked-->
+            <ImageView
+                android:layout_marginEnd="5dp"
+                android:id="@+id/blockIv"
+                android:layout_gravity="center_vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_unblock"
+                android:layout_marginRight="5dp" />
         </LinearLayout>
     </androidx.appcompat.widget.Toolbar>
     <androidx.recyclerview.widget.RecyclerView
