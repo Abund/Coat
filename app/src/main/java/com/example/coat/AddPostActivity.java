@@ -914,7 +914,7 @@ public class AddPostActivity extends AppCompatActivity {
                 //put required headers
                 Map<String, String> headers = new HashMap<>();
                 headers.put("Content-Type", "application/json");
-                headers.put("Authorization", "key=AAAA7AuJGz8:APA91bGwtgymO7JGkhboQEjJPR7wdIzOYA4ZeCU0th6udSCABz8VnPcfcwlh8R7hSrYBzX1QQcP8To55cwcRSjIj0YttTGVaaXP2e8u18QGbluxclRlIFBwlExiwqk9AkHPt6cLegJkt");//paste your fcm key here after "key="
+                headers.put("Authorization", "key=AAAA9hmQsV0:APA91bGNuFV7B6aiTqYkyh22sA_CKmWo6ur8AxuUbcY-VstAbGdaF-YPVucsUKR37x8i8eUmt93mxhB6ViNIXqz3RpT5ZSuRD4htFDPf0Njm3-el1vV-B52gOHhfCMm5PxOvRUUy87hY");//paste your fcm key here after "key="
 
                 return headers;
             }

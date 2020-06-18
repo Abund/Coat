@@ -454,7 +454,7 @@ public class HomeScreen extends AppCompatActivity
         else if (id == R.id.sign_out) {
 
             firebaseAuth = FirebaseAuth.getInstance();
-            LoginManager.getInstance().logOut();
+            //LoginManager.getInstance().logOut();
             firebaseAuth.signOut();
             Intent at = new Intent(HomeScreen.this, MainActivity.class);
             startActivity(at);
@@ -522,13 +522,16 @@ public class HomeScreen extends AppCompatActivity
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             firebaseAuth = FirebaseAuth.getInstance();
-            LoginManager.getInstance().logOut();
+            //LoginManager.getInstance().logOut();
             firebaseAuth.signOut();
             Intent at = new Intent(this, MainActivity.class);
             startActivity(at);
         }else if (id == R.id.action_add_post) {
             startActivity(new Intent(HomeScreen.this, AddPostActivity.class));
 
+        }else if (id==R.id.action_settings){
+            //go to settings activity
+            startActivity(new Intent(this, SettingsActivity.class));
         }
 
         return super.onOptionsItemSelected(item);

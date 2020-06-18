@@ -36,6 +36,7 @@ import com.example.coat.AddPostActivity;
 import com.example.coat.HomeScreen;
 import com.example.coat.MainActivity;
 import com.example.coat.R;
+import com.example.coat.SettingsActivity;
 import com.example.coat.adapter.AdapterPost;
 import com.example.coat.model.Post;
 import com.facebook.login.LoginManager;
@@ -235,13 +236,16 @@ public class PersonalPage extends Fragment {
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             firebaseAuth = FirebaseAuth.getInstance();
-            LoginManager.getInstance().logOut();
+            //LoginManager.getInstance().logOut();
             firebaseAuth.signOut();
             Intent at = new Intent(getActivity(), MainActivity.class);
             startActivity(at);
         }else if (id == R.id.action_add_post) {
             startActivity(new Intent(getActivity(), AddPostActivity.class));
 
+        }else if (id==R.id.action_settings){
+            //go to settings activity
+            startActivity(new Intent(getActivity(), SettingsActivity.class));
         }
 
         return super.onOptionsItemSelected(item);

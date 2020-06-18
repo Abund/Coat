@@ -18,12 +18,11 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.coat.HomeScreen;
 import com.example.coat.MainActivity;
 import com.example.coat.R;
+import com.example.coat.SettingsActivity;
 import com.example.coat.adapter.AdapterUser;
 import com.example.coat.model.User;
-import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -124,6 +123,9 @@ public class Chats extends Fragment {
             firebaseAuth = FirebaseAuth.getInstance();
             firebaseAuth.signOut();
             checkUserStatus();
+        }else if (id==R.id.actionSetting){
+            //go to settings activity
+            startActivity(new Intent(getActivity(), SettingsActivity.class));
         }
 
         return super.onOptionsItemSelected(item);

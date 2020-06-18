@@ -43,7 +43,6 @@ import com.android.volley.toolbox.Volley;
 import com.example.coat.adapter.AdapterChat;
 import com.example.coat.model.Chats;
 import com.example.coat.model.User;
-import com.example.coat.notifications.Client;
 import com.example.coat.notifications.Data;
 import com.example.coat.notifications.Sender;
 import com.example.coat.notifications.Token;
@@ -75,9 +74,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-
-import retrofit2.Call;
-import retrofit2.Callback;
 
 public class MessageActivity extends AppCompatActivity {
 
@@ -525,8 +521,14 @@ public class MessageActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for(DataSnapshot ds: dataSnapshot.getChildren()){
                     Token token =ds.getValue(Token.class);
-                    Data data = new Data(myUid,firstName+":"+message,"New Message",hisUid,R.drawable.ic_account_circle_black_24dp);
-
+                    //Data data = new Data(myUid,firstName+":"+message,"New Message",hisUid,R.drawable.ic_account_circle_black_24dp);
+                    Data data = new Data(
+                            ""+myUid,
+                            ""+firstName + ": " + message,
+                            "New Message",
+                            ""+hisUid,
+                            "ChatNotification",
+                            R.drawable.ic_default_img);
                     Sender sender = new Sender(data,token.getToken());
                     //fcm json object request
                     try {
