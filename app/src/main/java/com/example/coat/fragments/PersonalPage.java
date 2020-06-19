@@ -56,6 +56,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -177,7 +178,7 @@ public class PersonalPage extends Fragment {
         });
 
         super.onCreate(savedInstanceState);
-
+        postList = new ArrayList<>();
         checkUserStatus();
         loadMyPosts();
         return view;

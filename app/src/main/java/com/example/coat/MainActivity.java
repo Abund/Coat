@@ -273,7 +273,10 @@ public class MainActivity extends AppCompatActivity {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithCredential:success");
                             FirebaseUser user = firebaseAuth.getCurrentUser();
-                            updateUI(user);
+                            //if user is signing in first time then get and show user info from google account
+                            if (task.getResult().getAdditionalUserInfo().isNewUser()){
+                                updateUI(user);
+                            }
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
@@ -308,7 +311,7 @@ public class MainActivity extends AppCompatActivity {
             String timeStamp= String.valueOf(System.currentTimeMillis());
             user.setOnlineStatus(timeStamp);
             user.setTypingTo("noOne");
-            //user.setImageUrl("");
+            user.setImageUrl("");
 
             myRef.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).setValue(user).addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override

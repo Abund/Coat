@@ -262,7 +262,6 @@ public class PostDetailActivity extends AppCompatActivity {
         return uri;
     }
 
-
     private void loadComments() {
         //layout(Linear) for recyclerview
         LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
@@ -273,7 +272,7 @@ public class PostDetailActivity extends AppCompatActivity {
         commentList = new ArrayList<>();
 
         //path of the post, to get it's comments
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Post").child(postId).child("Comments");
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts").child(postId).child("Comments");
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -570,8 +569,8 @@ public class PostDetailActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot ds: dataSnapshot.getChildren()){
-                    myName = ""+ds.child("name").getValue();
-                    myDp = ""+ds.child("image").getValue();
+                    myName = ""+ds.child("firstName").getValue();
+                    myDp = ""+ds.child("imageUrl").getValue();
 
                     //set data
                     try {
@@ -594,7 +593,7 @@ public class PostDetailActivity extends AppCompatActivity {
     private void loadPostInfo() {
         //get post using the id of the post
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
-        Query query = ref.orderByChild("pId").equalTo(postId);
+        Query query = ref.orderByChild("pid").equalTo(postId);
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
