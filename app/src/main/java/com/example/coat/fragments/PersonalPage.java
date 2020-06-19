@@ -112,7 +112,7 @@ public class PersonalPage extends Fragment {
         firebaseAuth= FirebaseAuth.getInstance();
         user= firebaseAuth.getCurrentUser();
         firebaseDatabase= FirebaseDatabase.getInstance();
-        databaseReference= firebaseDatabase.getReference("users");
+        databaseReference= firebaseDatabase.getReference("Users");
 
         firstNamePro = view.findViewById(R.id.firstNamePro);
         lastNamePro = view.findViewById(R.id.lastNamePro);
@@ -380,7 +380,7 @@ public class PersonalPage extends Fragment {
         postsRecyclerView.setLayoutManager(layoutManager);
 
         //init posts list
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Post");
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
         //qurey to load posts
         /*whenever user publishes a post the uid of this user is also saved as info of post
          * so we're retrieving posts having uid equals to uid of current user*/

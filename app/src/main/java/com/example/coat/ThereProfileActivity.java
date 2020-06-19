@@ -71,7 +71,7 @@ public class ThereProfileActivity extends AppCompatActivity {
         uid = intent.getStringExtra("uid");
 
 
-        Query query = FirebaseDatabase.getInstance().getReference("users").orderByChild("uid").equalTo(uid);
+        Query query = FirebaseDatabase.getInstance().getReference("Users").orderByChild("uid").equalTo(uid);
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {

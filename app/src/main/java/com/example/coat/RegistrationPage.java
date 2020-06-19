@@ -133,7 +133,7 @@ public class RegistrationPage extends AppCompatActivity {
 
         firebaseAuth = FirebaseAuth.getInstance();
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        final DatabaseReference myRef = database.getReference("users");
+        final DatabaseReference myRef = database.getReference("Users");
 
         if(firebaseAuth.getCurrentUser()!=null){
             Intent at = new Intent(RegistrationPage.this, HomeScreen.class);
@@ -324,7 +324,7 @@ public class RegistrationPage extends AppCompatActivity {
             Toast.makeText(RegistrationPage.this,personFamilyName+"Registration Successful",Toast.LENGTH_SHORT).show();
 
             FirebaseDatabase database = FirebaseDatabase.getInstance();
-            final DatabaseReference myRef = database.getReference("users");
+            final DatabaseReference myRef = database.getReference("Users");
 
             User user = new User();
             user.setEmail(personEmail);

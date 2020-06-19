@@ -104,7 +104,7 @@ public class HomeFragment extends Fragment {
         loadPost();
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference databaseReference=database.getReference("users");
+        DatabaseReference databaseReference=database.getReference("Users");
         databaseReference.keepSynced(true);
 
         firebaseAuth =FirebaseAuth.getInstance();
@@ -119,7 +119,7 @@ public class HomeFragment extends Fragment {
     }
 
     private void loadPost() {
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Post");
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Posts");
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {

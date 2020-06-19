@@ -68,7 +68,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder>{
         this.postList=postList;
         myUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         likesRef = FirebaseDatabase.getInstance().getReference().child("Likes");
-        postsRef = FirebaseDatabase.getInstance().getReference().child("Post");
+        postsRef = FirebaseDatabase.getInstance().getReference().child("Posts");
     }
 
     @NonNull

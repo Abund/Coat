@@ -143,7 +143,7 @@ public class AddPostActivity extends AppCompatActivity {
 
         }
 
-        databaseReference= FirebaseDatabase.getInstance().getReference("users");
+        databaseReference= FirebaseDatabase.getInstance().getReference("Users");
         Query query= databaseReference.orderByChild("email").equalTo(email);
         query.addValueEventListener(new ValueEventListener() {
             @Override
@@ -472,7 +472,7 @@ public class AddPostActivity extends AppCompatActivity {
     }
 
     private void loadPostData(String editPostId) {
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Post");
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Posts");
         //get detail of post using id of post
         Query fquery = reference.orderByChild("pid").equalTo(editPostId);
         fquery.addValueEventListener(new ValueEventListener() {
@@ -757,7 +757,7 @@ public class AddPostActivity extends AppCompatActivity {
                                 hashMap.put("pComments", "0");
 
                                 //path to store post data
-                                DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Post");
+                                DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
                                 //put data in this ref
                                 ref.child(timeStamp).setValue(hashMap)
                                         .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -823,7 +823,7 @@ public class AddPostActivity extends AppCompatActivity {
             hashMap.put("pComments", "0");
 
             //path to store post data
-            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Post");
+            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
             //put data in this ref
             ref.child(timeStamp).setValue(hashMap)
                     .addOnSuccessListener(new OnSuccessListener<Void>() {

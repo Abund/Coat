@@ -298,7 +298,7 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(MainActivity.this,personFamilyName+"Registration Successful",Toast.LENGTH_SHORT).show();
 
             FirebaseDatabase database = FirebaseDatabase.getInstance();
-            final DatabaseReference myRef = database.getReference("users");
+            final DatabaseReference myRef = database.getReference("Users");
 
             User user = new User();
             user.setEmail(personEmail);

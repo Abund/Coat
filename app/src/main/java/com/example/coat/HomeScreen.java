@@ -111,9 +111,9 @@ public class HomeScreen extends AppCompatActivity
         loadPost();
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference databaseReference=database.getReference("users");
+        DatabaseReference databaseReference=database.getReference("Users");
         databaseReference.keepSynced(true);
-        myRef = FirebaseDatabase.getInstance().getReference().child("users");
+        myRef = FirebaseDatabase.getInstance().getReference().child("Users");
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
@@ -233,7 +233,7 @@ public class HomeScreen extends AppCompatActivity
     }
 
     private void loadPost() {
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Post");
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Posts");
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -255,7 +255,7 @@ public class HomeScreen extends AppCompatActivity
     }
 
     private void searchPost(final String search){
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Post");
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Posts");
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
