@@ -125,6 +125,10 @@ public class PersonalPage extends Fragment {
         coverIv = view.findViewById(R.id.coverIv);
         postsRecyclerView = view.findViewById(R.id.recyclerview_posts);
 
+        //init arrays of permissions
+        cameraPermissions = new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
+        storagePermissions = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE};
+
         progressDialog = new ProgressDialog(getActivity());
 
         Query query = databaseReference.orderByChild("email").equalTo(user.getEmail());
@@ -137,7 +141,7 @@ public class PersonalPage extends Fragment {
                     String address =""+ ds.child("address").getValue();
                     String UserName =""+ ds.child("userName").getValue();
                     String email =""+ ds.child("email").getValue();
-                    String cover =""+ ds.child("image").getValue();
+                    String cover =""+ ds.child("imageUrl").getValue();
                     String image =""+ ds.child("cover").getValue();
 
                     firstNamePro.setText(firstName);
@@ -457,7 +461,7 @@ public class PersonalPage extends Fragment {
 
         String options[] = {"Camera", "Gallery"};
         //alert dialog
-        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getActivity());
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         //set title
         builder.setTitle("Pick Image From");
         //set items to dialog

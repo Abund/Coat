@@ -101,7 +101,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder>{
         holder.pTimeTv.setText(time);
         holder.pTitleTv.setText(pTitle);
         holder.pDescriptionTv.setText(pDescription);
-        holder.likeBtn.setText(pLikes+" Likes");
+        holder.pLikes.setText(pLikes+" Likes");
         holder.pCommentsTv.setText(pComments +" Comments");
 
         //set likes for each post

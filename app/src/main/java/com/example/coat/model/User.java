@@ -11,10 +11,25 @@ public class User {
     private String onlineStatus;
     private String typingTo;
     private String imageUrl;
+    private String cover;
     boolean isBlocked = false;
 
     public User(){
 
+    }
+
+    public User(int userId, String firstName, String lastName, String email, String password, String uid, String onlineStatus, String typingTo, String imageUrl, String cover, boolean isBlocked) {
+        this.userId = userId;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.password = password;
+        this.uid = uid;
+        this.onlineStatus = onlineStatus;
+        this.typingTo = typingTo;
+        this.imageUrl = imageUrl;
+        this.cover = cover;
+        this.isBlocked = isBlocked;
     }
 
     public int getUserId() {
@@ -87,6 +102,14 @@ public class User {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    public String getCover() {
+        return cover;
+    }
+
+    public void setCover(String cover) {
+        this.cover = cover;
     }
 
     public boolean isBlocked() {

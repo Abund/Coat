@@ -251,9 +251,9 @@ public class MessageActivity extends AppCompatActivity {
             }
         });
 
-        seenMessage();
-        checkIsBlocked();
         readMessage();
+        checkIsBlocked();
+        seenMessage();
 
     }
 
@@ -326,7 +326,7 @@ public class MessageActivity extends AppCompatActivity {
                                             public void onSuccess(Void aVoid) {
                                                 //unblocked successfully
                                                 Toast.makeText(MessageActivity.this, "Unbloked Successfully...", Toast.LENGTH_SHORT).show();
-                                                blockIv.setImageResource(R.drawable.ic_block_black_24dp);
+                                                blockIv.setImageResource(R.drawable.ic_unblock);
                                             }
                                         })
                                         .addOnFailureListener(new OnFailureListener() {
@@ -564,6 +564,7 @@ public class MessageActivity extends AppCompatActivity {
         hashMap.put("message",message);
         hashMap.put("timeStamp",timeStamp);
         hashMap.put("isSeen",false);
+        hashMap.put("type", "text");
         databaseReference.child("Chats").push().setValue(hashMap);
 //        messageEt.setText("");
 //
@@ -642,7 +643,7 @@ public class MessageActivity extends AppCompatActivity {
                     try {
                         JSONObject senderJsonObj = new JSONObject(new Gson().toJson(sender));
                         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest("https://fcm.googleapis.com/fcm/send", senderJsonObj,
-                                new com.android.volley.Response.Listener<JSONObject>() {
+                                new Response.Listener<JSONObject>() {
                                     @Override
                                     public void onResponse(JSONObject response) {
                                         //response of the request
@@ -797,7 +798,7 @@ public class MessageActivity extends AppCompatActivity {
                             hashMap.put("sender", myUid);
                             hashMap.put("receiver", hisUid);
                             hashMap.put("message", downloadUri);
-                            hashMap.put("timestamp", timeStamp);
+                            hashMap.put("timeStamp", timeStamp);
                             hashMap.put("type", "image");
                             hashMap.put("isSeen", false);
                             //put this data to firebease

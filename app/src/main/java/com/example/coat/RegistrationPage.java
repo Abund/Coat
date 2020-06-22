@@ -176,6 +176,7 @@ public class RegistrationPage extends AppCompatActivity {
                             user.setOnlineStatus(timeStamp);
                             user.setTypingTo("noOne");
                             user.setImageUrl("");
+                            user.setCover("");
 
                             myRef.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).setValue(user).addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
@@ -335,6 +336,7 @@ public class RegistrationPage extends AppCompatActivity {
             user.setOnlineStatus(timeStamp);
             user.setTypingTo("noOne");
             user.setImageUrl("");
+            user.setCover("");
 
             myRef.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).setValue(user).addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override
