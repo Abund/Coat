@@ -25,6 +25,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.coat.AddPostActivity;
 import com.example.coat.PostDetailActivity;
+import com.example.coat.PostLikedByActivity;
 import com.example.coat.R;
 import com.example.coat.ThereProfileActivity;
 import com.example.coat.model.Post;
@@ -213,6 +214,16 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder>{
             public void onClick(View view) {
                 Intent intent = new Intent(context, ThereProfileActivity.class);
                 intent.putExtra("uid",uid);
+                context.startActivity(intent);
+            }
+        });
+
+        //click like count to start PostLikedByActiivty, and pass the post id
+        holder.pLikes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, PostLikedByActivity.class);
+                intent.putExtra("postId", pid);
                 context.startActivity(intent);
             }
         });
