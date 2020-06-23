@@ -2,6 +2,7 @@ package com.example.coat;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
@@ -91,6 +92,7 @@ public class HomeScreen extends AppCompatActivity
     RecyclerView recyclerView;
     List<Post> postList;
     AdapterPost adapterPost;
+    ActionBar actionBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,6 +101,9 @@ public class HomeScreen extends AppCompatActivity
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        actionBar = getSupportActionBar();
+        actionBar.setTitle("Home");
 
 
         recyclerView = findViewById(R.id.postRecyclerView);
@@ -458,6 +463,12 @@ public class HomeScreen extends AppCompatActivity
             firebaseAuth.signOut();
             Intent at = new Intent(HomeScreen.this, MainActivity.class);
             startActivity(at);
+        }
+        else if (id == R.id.nav_notification) {
+
+            actionBar.setTitle("Notification");
+            Fragment newFragment =  new NotificationFragment();
+            replaceFragment(newFragment);
         }
 //
         DrawerLayout drawer = findViewById(R.id.drawer_layout);

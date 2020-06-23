@@ -23,4 +23,8 @@
         android:title="Add Post"
         app:showAsAction="always"
         android:icon="@drawable/ic_add_white"/>
+
+    <item android:id="@+id/nav_notification"
+        android:title="More"
+        android:icon="@drawable/ic_baseline_notifications_24"/>
 </menu>
