@@ -19,7 +19,7 @@
         <item
             android:id="@+id/nav_chats"
             android:icon="@drawable/ic_chat_black_24dp"
-            android:title="@string/menu_chats" />
+            android:title="App Users" />
         <item
             android:id="@+id/nav_viewPsychologist"
             android:icon="@drawable/ic_local_hospital_black_24dp"

@@ -81,6 +81,7 @@ public class MessageListFragment extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        setHasOptionsMenu(true);
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
@@ -216,7 +217,7 @@ public class MessageListFragment extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         //inflating menu
         inflater.inflate(R.menu.homescreen, menu);
-
+        super.onCreateOptionsMenu(menu,inflater);
         //hide addpost icon from this fragment
         menu.findItem(R.id.action_add_post).setVisible(false);
 //        menu.findItem(R.id.action_add_participant).setVisible(false);
@@ -224,7 +225,6 @@ public class MessageListFragment extends Fragment {
 
         super.onCreateOptionsMenu(menu, inflater);
     }
-
 
     /*handle menu item clicks*/
     @Override

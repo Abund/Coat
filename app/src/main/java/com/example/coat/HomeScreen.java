@@ -507,8 +507,6 @@ public class HomeScreen extends AppCompatActivity
 
     }
 
-
-
     private void loadPost() {
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Posts");
         databaseReference.addValueEventListener(new ValueEventListener() {
@@ -519,30 +517,6 @@ public class HomeScreen extends AppCompatActivity
                     Post post = ds.getValue(Post.class);
                     postList.add(post);
 
-                    adapterPost = new AdapterPost(HomeScreen.this,postList);
-                    recyclerView.setAdapter(adapterPost);
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Toast.makeText(HomeScreen.this,""+databaseError.getMessage(),Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-    private void searchPost(final String search){
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Posts");
-        databaseReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                postList.clear();
-                for(DataSnapshot ds:dataSnapshot.getChildren()){
-                    Post post = ds.getValue(Post.class);
-
-                    if(post.getpTitle().toLowerCase().contains(search.toLowerCase())||post.getpDescr().toLowerCase().contains(search.toLowerCase())){
-                        postList.add(post);
-                    }
                     adapterPost = new AdapterPost(HomeScreen.this,postList);
                     recyclerView.setAdapter(adapterPost);
                 }
@@ -584,7 +558,6 @@ public class HomeScreen extends AppCompatActivity
             finish();
         }
     }
-
 
 //    private void handleUpload(Bitmap bitmap){
 //        ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -694,11 +667,13 @@ public class HomeScreen extends AppCompatActivity
 
         if (id == R.id.nav_home) {
             // Handle the camera action
+            actionBar.setTitle("Home");
             Fragment newFragment =  new HomeFragment();
 //            FragmentTransaction ft = getFragmentManager().beginTransaction();
 //            ft.add(R.id.content_frame, newFragment).commit();
             replaceFragment(newFragment);
         } else if (id == R.id.nav_personalPage) {
+            actionBar.setTitle("Profile");
             Fragment newFragment =  new PersonalPage();
 //            FragmentTransaction ft = getFragmentManager().beginTransaction();
 //            ft.add(R.id.content_frame, newFragment).commit();
@@ -709,6 +684,7 @@ public class HomeScreen extends AppCompatActivity
             replaceFragment(newFragment);
 
         }else if (id == R.id.nav_chats) {
+            actionBar.setTitle("Users");
             Fragment newFragment =  new Chats();
             replaceFragment(newFragment);
 
@@ -717,6 +693,7 @@ public class HomeScreen extends AppCompatActivity
             replaceFragment(newFragment);
 
         }else if (id == R.id.nav_chatList) {
+            actionBar.setTitle("Chat Lists");
             Fragment newFragment =  new MessageListFragment();
             replaceFragment(newFragment);
 
@@ -738,6 +715,11 @@ public class HomeScreen extends AppCompatActivity
             actionBar.setTitle("Notification");
             Fragment newFragment =  new NotificationFragment();
             replaceFragment(newFragment);
+        }else if (id == R.id.nav_notification) {
+
+            actionBar.setTitle("Settings");
+            Intent at = new Intent(HomeScreen.this, SettingsActivity.class);
+            startActivity(at);
         }
 //
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -760,60 +742,28 @@ public class HomeScreen extends AppCompatActivity
         fragmentTransaction.addToBackStack(null).commit();
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.homescreen, menu);
-        //menu.findItem(R.id.action_search).setVisible(false);
-        MenuItem item = menu.findItem(R.id.action_search);
-        SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
-
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                if(!TextUtils.isEmpty(query)){
-                    searchPost(query);
-                }else {
-                    loadPost();
-                }
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                if(!TextUtils.isEmpty(newText)){
-                    searchPost(newText);
-                }else {
-                    loadPost();
-                }
-                return false;
-            }
-        });
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            firebaseAuth = FirebaseAuth.getInstance();
-            //LoginManager.getInstance().logOut();
-            firebaseAuth.signOut();
-            Intent at = new Intent(this, MainActivity.class);
-            startActivity(at);
-        }else if (id == R.id.action_add_post) {
-            startActivity(new Intent(HomeScreen.this, AddPostActivity.class));
-
-        }else if (id==R.id.action_settings){
-            //go to settings activity
-            startActivity(new Intent(this, SettingsActivity.class));
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        // Handle action bar item clicks here. The action bar will
+//        // automatically handle clicks on the Home/Up button, so long
+//        // as you specify a parent activity in AndroidManifest.xml.
+//        int id = item.getItemId();
+//
+//        //noinspection SimplifiableIfStatement
+//        if (id == R.id.action_settings) {
+//            firebaseAuth = FirebaseAuth.getInstance();
+//            //LoginManager.getInstance().logOut();
+//            firebaseAuth.signOut();
+//            Intent at = new Intent(this, MainActivity.class);
+//            startActivity(at);
+//        }else if (id == R.id.action_add_post) {
+//            startActivity(new Intent(HomeScreen.this, AddPostActivity.class));
+//
+//        }else if (id==R.id.action_settings){
+//            //go to settings activity
+//            startActivity(new Intent(this, SettingsActivity.class));
+//        }
+//
+//        return super.onOptionsItemSelected(item);
+//    }
 }
