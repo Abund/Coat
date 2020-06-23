@@ -48,6 +48,7 @@ import com.example.coat.fragments.BlogPost;
 import com.example.coat.fragments.ChatRooms;
 import com.example.coat.fragments.Chats;
 import com.example.coat.fragments.HomeFragment;
+import com.example.coat.fragments.MessageListFragment;
 import com.example.coat.fragments.NotificationFragment;
 import com.example.coat.fragments.PersonalPage;
 import com.example.coat.fragments.ViewPsychologist;
@@ -713,6 +714,10 @@ public class HomeScreen extends AppCompatActivity
 
         } else if (id == R.id.nav_viewPsychologist) {
             Fragment newFragment =  new ViewPsychologist();
+            replaceFragment(newFragment);
+
+        }else if (id == R.id.nav_chatList) {
+            Fragment newFragment =  new MessageListFragment();
             replaceFragment(newFragment);
 
         } else if (id == R.id.nav_chatRooms) {
