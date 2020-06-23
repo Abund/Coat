@@ -1,4 +1,4 @@
-package com.example.coat;
+package com.example.coat.fragments;
 
 import android.os.Bundle;
 
@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.coat.R;
 import com.example.coat.adapter.AdapterNotification;
 import com.example.coat.model.Notifications;
 import com.google.firebase.auth.FirebaseAuth;

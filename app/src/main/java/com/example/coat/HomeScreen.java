@@ -2,12 +2,14 @@ package com.example.coat;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.core.view.MenuItemCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -17,10 +19,16 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.Manifest;
+import android.app.ProgressDialog;
+import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.TextUtils;
@@ -40,12 +48,12 @@ import com.example.coat.fragments.BlogPost;
 import com.example.coat.fragments.ChatRooms;
 import com.example.coat.fragments.Chats;
 import com.example.coat.fragments.HomeFragment;
+import com.example.coat.fragments.NotificationFragment;
 import com.example.coat.fragments.PersonalPage;
 import com.example.coat.fragments.ViewPsychologist;
 import com.example.coat.model.Post;
 import com.example.coat.model.User;
 import com.example.coat.notifications.Token;
-import com.facebook.login.LoginManager;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -57,6 +65,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.storage.FirebaseStorage;
@@ -72,19 +81,25 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import static com.google.firebase.storage.FirebaseStorage.getInstance;
+
 public class HomeScreen extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener  {
 
     private TextView clientName,profileName;
     private ImageView imageViewProfile;
     FirebaseAuth firebaseAuth;
-    FirebaseUser userf;
-    DatabaseReference myRef;
     boolean closeApp;
     private int TAKE_IMAGE_CODE=10001;
     private static  final  int PICK_IMAGE=1;
-    Uri imageuri;
+    //storage
+    StorageReference storageReference;
+    //path where images of user profile and cover will be stored
+    String storagePath = "Users_Profile_Cover_Imgs/";
     private  static final String TAG="HomeScreenActivity";
+
+    DatabaseReference databaseReference;
+    FirebaseDatabase firebaseDatabase;
 
     String mUID;
     FirebaseUser user;
@@ -93,6 +108,27 @@ public class HomeScreen extends AppCompatActivity
     List<Post> postList;
     AdapterPost adapterPost;
     ActionBar actionBar;
+
+
+    //progress dialog
+    ProgressDialog progressDialog;
+
+
+    //permissions constants
+    private static final int CAMERA_REQUEST_CODE = 100;
+    private static final int STORAGE_REQUEST_CODE = 200;
+    private static final int IMAGE_PICK_GALLERY_CODE = 300;
+    private static final int IMAGE_PICK_CAMERA_CODE = 400;
+
+    //arrays of permissions to be requested
+    String cameraPermissions[];
+    String storagePermissions[];
+
+    //uri of picked image
+    Uri image_uri;
+
+    //for checking profile or cover photo
+    String profileOrCoverPhoto;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,6 +140,17 @@ public class HomeScreen extends AppCompatActivity
 
         actionBar = getSupportActionBar();
         actionBar.setTitle("Home");
+        //init firebase
+        firebaseAuth = FirebaseAuth.getInstance();
+        user = firebaseAuth.getCurrentUser();
+        firebaseDatabase = FirebaseDatabase.getInstance();
+        databaseReference = firebaseDatabase.getReference("Users");
+        storageReference = getInstance().getReference(); //firebase storage reference
+
+        //init arrays of permissions
+        cameraPermissions = new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
+        storagePermissions = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE};
+        progressDialog = new ProgressDialog(this);
 
 
         recyclerView = findViewById(R.id.postRecyclerView);
@@ -118,7 +165,6 @@ public class HomeScreen extends AppCompatActivity
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference databaseReference=database.getReference("Users");
         databaseReference.keepSynced(true);
-        myRef = FirebaseDatabase.getInstance().getReference().child("Users");
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
@@ -131,8 +177,7 @@ public class HomeScreen extends AppCompatActivity
         drawer.addDrawerListener(toggle);
         toggle.syncState();
         navigationView.setNavigationItemSelectedListener(this);
-        firebaseAuth =FirebaseAuth.getInstance();
-        userf=firebaseAuth.getCurrentUser();
+
 
 
         Fragment newFragment =  new HomeFragment();
@@ -151,39 +196,6 @@ public class HomeScreen extends AppCompatActivity
         final AlertDialog dialog=builder.create();
 
         user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user!=null){
-            if(user.getPhotoUrl()!=null){
-//                Glide.with(this)
-//                        .load(user.getPhotoUrl())
-//                        .into(imageViewProfile);
-//                Glide.with(this)
-//                        .load(user.getPhotoUrl())
-//                        .into(imageViewHomePageProfile);
-                Picasso.get().load(user.getPhotoUrl()).networkPolicy(NetworkPolicy.OFFLINE).into(imageViewProfile, new Callback() {
-                    @Override
-                    public void onSuccess() {
-
-                    }
-
-                    @Override
-                    public void onError(Exception e) {
-                        Picasso.get().load(user.getPhotoUrl()).into(imageViewProfile);
-                    }
-                });
-
-//                Picasso.get().load(user.getPhotoUrl()).networkPolicy(NetworkPolicy.OFFLINE).into(imageViewHomePageProfile, new Callback() {
-//                    @Override
-//                    public void onSuccess() {
-//
-//                    }
-//
-//                    @Override
-//                    public void onError(Exception e) {
-//                        Picasso.get().load(user.getPhotoUrl()).into(imageViewHomePageProfile);
-//                    }
-//                });
-            }
-        }
 
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -191,8 +203,19 @@ public class HomeScreen extends AppCompatActivity
                 List<String> keys = new ArrayList<>();
                 User user= new User();
                 user=dataSnapshot.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).getValue(User.class);
-                //clientName.setText(user.getFirstName());
                 profileName.setText(user.getFirstName()+" "+user.getLastName());
+                final User finalUser = user;
+                Picasso.get().load(user.getImageUrl()).networkPolicy(NetworkPolicy.OFFLINE).into(imageViewProfile, new Callback() {
+                    @Override
+                    public void onSuccess() {
+
+                    }
+
+                    @Override
+                    public void onError(Exception e) {
+                        Picasso.get().load(finalUser.getImageUrl()).into(imageViewProfile);
+                    }
+                });
             }
 
             @Override
@@ -204,7 +227,7 @@ public class HomeScreen extends AppCompatActivity
         imageViewProfile.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
-                dialog.show();
+                showImagePicDialog();
 //                Intent intent= new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 //                if(intent.resolveActivity(getPackageManager())!=null){
 //                    startActivityForResult(intent,TAKE_IMAGE_CODE);
@@ -236,6 +259,254 @@ public class HomeScreen extends AppCompatActivity
 
 
     }
+
+
+    private void pickFromCamera() {
+        //Intent of picking image from device camera
+        ContentValues values = new ContentValues();
+        values.put(MediaStore.Images.Media.TITLE, "Temp Pic");
+        values.put(MediaStore.Images.Media.DESCRIPTION, "Temp Description");
+        //put image uri
+        image_uri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+
+        //intent to start camera
+        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, image_uri);
+        startActivityForResult(cameraIntent, IMAGE_PICK_CAMERA_CODE);
+    }
+
+    private void pickFromGallery() {
+        //pick from gallery
+        Intent galleryIntent = new Intent(Intent.ACTION_PICK);
+        galleryIntent.setType("image/*");
+        startActivityForResult(galleryIntent, IMAGE_PICK_GALLERY_CODE);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    private void requestCameraPermission() {
+        //request runtime storage permission
+        requestPermissions(cameraPermissions, CAMERA_REQUEST_CODE);
+    }
+
+    private void showImagePicDialog() {
+        //show dialog containing options Camera and Gallery to pick the image
+
+        String options[] = {"Camera", "Gallery"};
+        //alert dialog
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        //set title
+        builder.setTitle("Pick Image From");
+        //set items to dialog
+        builder.setItems(options, new DialogInterface.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.M)
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                //handle dialog item clicks
+                if (which == 0) {
+                    //Camera clicked
+                    if (!checkCameraPermission()) {
+                        requestCameraPermission();
+                    } else {
+                        pickFromCamera();
+                    }
+                } else if (which == 1) {
+                    //Gallery clicked
+                    if (!checkStoragePermission()) {
+                        requestStoragePermission();
+                    } else {
+                        pickFromGallery();
+                    }
+                }
+            }
+        });
+        //create and show dialog
+        builder.create().show();
+
+
+    }
+
+    private boolean checkCameraPermission() {
+        //check if storage permission is enabled or not
+        //return true if enabled
+        //return false if not enabled
+        boolean result = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+                == (PackageManager.PERMISSION_GRANTED);
+
+        boolean result1 = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                == (PackageManager.PERMISSION_GRANTED);
+        return result && result1;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    private void requestStoragePermission() {
+        //request runtime storage permission
+        requestPermissions(storagePermissions, STORAGE_REQUEST_CODE);
+    }
+
+    private boolean checkStoragePermission() {
+        //check if storage permission is enabled or not
+        //return true if enabled
+        //return false if not enabled
+        boolean result = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                == (PackageManager.PERMISSION_GRANTED);
+        return result;
+    }
+
+    private void uploadProfileCoverPhoto(final Uri uri) {
+        //show progress
+        progressDialog.show();
+
+        /*Instead of creating separate function for Profile Picture and Cover Photo
+         * i'm doing work for both in same function
+         *
+         * To add check ill add a string variable and assign it value "image" when user clicks
+         * "Edit Profile Pic", and assign it value "cover" when user clicks "Edit Cover Photo"
+         * Here: image is the key in each user containing url of user's profile picture
+         *       cover is the key in each user containing url of user's cover photo */
+
+        /*The parameter "image_uri" contains the uri of image picked either from camera or gallery
+         * We will use UID of the currently signed in user as name of the image so there will be only one image for
+         * profile and one image for cover for each user*/
+
+        //path and name of image to be stored in firebase storage
+        //e.g. Users_Profile_Cover_Imgs/image_e12f3456f789.jpg
+        //e.g. Users_Profile_Cover_Imgs/cover_c123n4567g89.jpg
+        String filePathAndName = storagePath + "" + profileOrCoverPhoto + "_" + user.getUid();
+
+        StorageReference storageReference2nd = storageReference.child(filePathAndName);
+        storageReference2nd.putFile(uri)
+                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        //image is uploaded to storage, now get it's url and store in user's database
+                        Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
+                        while (!uriTask.isSuccessful()) ;
+                        final Uri downloadUri = uriTask.getResult();
+
+                        //check if image is uploaded or not and url is received
+                        if (uriTask.isSuccessful()) {
+                            //image uploaded
+                            //add/update url in user's database
+                            HashMap<String, Object> results = new HashMap<>();
+                            /*First Parameter is profileOrCoverPhoto that has value "image" or "cover"
+                              which are keys in user's database where url of image will be saved in one
+                              of them
+                              Second Parameter contains the url of the image stored in firebase storage, this
+                              url will be saved as value against key "image" or "cover"*/
+                            profileOrCoverPhoto = "image";
+                            results.put(profileOrCoverPhoto, downloadUri.toString());
+
+                            databaseReference.child(user.getUid()).updateChildren(results)
+                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                            //url in database of user is added successfully
+                                            //dismiss progress bar
+                                            progressDialog.dismiss();
+                                            Toast.makeText(HomeScreen.this, "Image Updated...", Toast.LENGTH_SHORT).show();
+                                        }
+                                    })
+                                    .addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            //error adding url in database of user
+                                            //dismiss progress bar
+                                            progressDialog.dismiss();
+                                            Toast.makeText(HomeScreen.this, "Erro Updating Image...", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+
+                            //if user edit his name, also change it from hist posts
+                            if (profileOrCoverPhoto.equals("image")) {
+                                DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
+                                Query query = ref.orderByChild("uid").equalTo(mUID);
+                                query.addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                        for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                                            String child = ds.getKey();
+                                            dataSnapshot.getRef().child(child).child("uDp").setValue(downloadUri.toString());
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                    }
+                                });
+
+                                DatabaseReference ref1 = FirebaseDatabase.getInstance().getReference("Users");
+                                Query query1 = ref1.orderByChild("uid").equalTo(mUID);
+                                query1.addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                        for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                                            String child = ds.getKey();
+                                            dataSnapshot.getRef().child(child).child("imageUrl").setValue(downloadUri.toString());
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                    }
+                                });
+
+                                //update user image in current users comments on posts
+                                ref.addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                        for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                                            String child = ds.getKey();
+                                            if (dataSnapshot.child(child).hasChild("Comments")) {
+                                                String child1 = "" + dataSnapshot.child(child).getKey();
+                                                Query child2 = FirebaseDatabase.getInstance().getReference("Posts").child(child1).child("Comments").orderByChild("uid").equalTo(mUID);
+                                                child2.addValueEventListener(new ValueEventListener() {
+                                                    @Override
+                                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                        for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                                                            String child = ds.getKey();
+                                                            dataSnapshot.getRef().child(child).child("uDp").setValue(downloadUri.toString());
+                                                        }
+                                                    }
+
+                                                    @Override
+                                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                                    }
+                                                });
+                                            }
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                    }
+                                });
+
+                            }
+
+                        } else {
+                            //error
+                            progressDialog.dismiss();
+                            Toast.makeText(HomeScreen.this, "Some error occured", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        //there were some error(s), get and show error message, dismiss progress dialog
+                        progressDialog.dismiss();
+                        Toast.makeText(HomeScreen.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+
+    }
+
+
 
     private void loadPost() {
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Posts");
@@ -286,7 +557,7 @@ public class HomeScreen extends AppCompatActivity
     public void updateToken(String token){
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Tokens");
         Token mToken = new Token(token);
-        databaseReference.child(userf.getUid()).setValue(mToken);
+        databaseReference.child(user.getUid()).setValue(mToken);
     }
 
     @Override
@@ -313,113 +584,106 @@ public class HomeScreen extends AppCompatActivity
         }
     }
 
+
+//    private void handleUpload(Bitmap bitmap){
+//        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//        bitmap.compress(Bitmap.CompressFormat.JPEG,100,baos);
+//
+//        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+//        final StorageReference reference = FirebaseStorage.getInstance().getReference()
+//                .child("profileImages")
+//                .child(uid+".jpeg");
+//        reference.putBytes(baos.toByteArray())
+//                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+//                    @Override
+//                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+//                        getDownloadUrl(reference);
+//                        // saves the user photo url to the database
+//                        Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
+//                        while(!uriTask.isSuccessful());
+//                        Uri downloadUri = uriTask.getResult();
+//                        if(uriTask.isSuccessful()){
+//                            HashMap<String,Object> results = new HashMap<>();
+//                            results.put("imageUrl",downloadUri.toString());
+//                            myRef.child(user.getUid()).updateChildren(results)
+//                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+//                                        @Override
+//                                        public void onSuccess(Void aVoid) {
+//
+//                                        }
+//                                    })
+//                                    .addOnFailureListener(new OnFailureListener() {
+//                                        @Override
+//                                        public void onFailure(@NonNull Exception e) {
+//
+//                                        }
+//                                    });
+//                        }else {
+//
+//                        }
+//
+//                    }
+//                })
+//                .addOnFailureListener(new OnFailureListener() {
+//                    @Override
+//                    public void onFailure(@NonNull Exception e) {
+//                        Log.e(TAG,"onFailure",e.getCause());
+//                    }
+//                });
+//    }
+//
+//    private void getDownloadUrl(StorageReference reference){
+//        reference.getDownloadUrl()
+//                .addOnSuccessListener(new OnSuccessListener<Uri>() {
+//                    @Override
+//                    public void onSuccess(Uri uri) {
+//                        Log.e(TAG,"onSuccess:"+uri);
+//                        setUserProfile(uri);
+//                    }
+//                });
+//    }
+//
+//    private void setUserProfile(Uri uri){
+//        FirebaseUser user=FirebaseAuth.getInstance().getCurrentUser();
+//        UserProfileChangeRequest request = new UserProfileChangeRequest.Builder()
+//                .setPhotoUri(uri).build();
+//        user.updateProfile(request)
+//                .addOnSuccessListener(new OnSuccessListener<Void>() {
+//                    @Override
+//                    public void onSuccess(Void aVoid) {
+//                        Toast.makeText(HomeScreen.this,"Updated successfully",Toast.LENGTH_SHORT).show();
+//                    }
+//                })
+//                .addOnFailureListener(new OnFailureListener() {
+//                    @Override
+//                    public void onFailure(@NonNull Exception e) {
+//                        Toast.makeText(HomeScreen.this,"profile image failed",Toast.LENGTH_SHORT).show();
+//                    }
+//                });
+//    }
+
     @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data){
-        super.onActivityResult(requestCode,resultCode,data);
-        if(requestCode==TAKE_IMAGE_CODE){
-            switch (resultCode){
-                case RESULT_OK:
-                    Bitmap bitmap =(Bitmap) data.getExtras().get("data");
-                    imageViewProfile.setImageBitmap(bitmap);
-                    handleUpload(bitmap);
-            }
-        }else if(requestCode==PICK_IMAGE){
-            //if(data.getData()!= null){
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        /*This method will be called after picking image from Camera or Gallery*/
+        if (resultCode == RESULT_OK) {
 
-            //}
-            switch (resultCode){
-                case RESULT_OK:
-                    Bitmap bitmap = null;
-                    try {
-                        imageuri = data.getData();
-                        bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(),imageuri);
-                        imageViewProfile.setImageBitmap(bitmap);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    handleUpload(bitmap);
+            if (requestCode == IMAGE_PICK_GALLERY_CODE) {
+                //image is picked from gallery, get uri of image
+                image_uri = data.getData();
+
+                uploadProfileCoverPhoto(image_uri);
             }
+            if (requestCode == IMAGE_PICK_CAMERA_CODE) {
+                //image is picked from camera, get uri of image
+
+                uploadProfileCoverPhoto(image_uri);
+
+            }
+
         }
+
+        super.onActivityResult(requestCode, resultCode, data);
     }
-
-    private void handleUpload(Bitmap bitmap){
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG,100,baos);
-
-        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        final StorageReference reference = FirebaseStorage.getInstance().getReference()
-                .child("profileImages")
-                .child(uid+".jpeg");
-        reference.putBytes(baos.toByteArray())
-                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        getDownloadUrl(reference);
-                        // saves the user photo url to the database
-                        Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
-                        while(!uriTask.isSuccessful());
-                        Uri downloadUri = uriTask.getResult();
-                        if(uriTask.isSuccessful()){
-                            HashMap<String,Object> results = new HashMap<>();
-                            results.put("imageUrl",downloadUri.toString());
-                            myRef.child(user.getUid()).updateChildren(results)
-                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                        @Override
-                                        public void onSuccess(Void aVoid) {
-
-                                        }
-                                    })
-                                    .addOnFailureListener(new OnFailureListener() {
-                                        @Override
-                                        public void onFailure(@NonNull Exception e) {
-
-                                        }
-                                    });
-                        }else {
-
-                        }
-
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.e(TAG,"onFailure",e.getCause());
-                    }
-                });
-    }
-
-    private void getDownloadUrl(StorageReference reference){
-        reference.getDownloadUrl()
-                .addOnSuccessListener(new OnSuccessListener<Uri>() {
-                    @Override
-                    public void onSuccess(Uri uri) {
-                        Log.e(TAG,"onSuccess:"+uri);
-                        setUserProfile(uri);
-                    }
-                });
-    }
-
-    private void setUserProfile(Uri uri){
-        FirebaseUser user=FirebaseAuth.getInstance().getCurrentUser();
-        UserProfileChangeRequest request = new UserProfileChangeRequest.Builder()
-                .setPhotoUri(uri).build();
-        user.updateProfile(request)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Toast.makeText(HomeScreen.this,"Updated successfully",Toast.LENGTH_SHORT).show();
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(HomeScreen.this,"profile image failed",Toast.LENGTH_SHORT).show();
-                    }
-                });
-    }
-
-
 
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {

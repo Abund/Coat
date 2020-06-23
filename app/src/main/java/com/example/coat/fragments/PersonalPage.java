@@ -61,6 +61,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import static android.app.Activity.RESULT_OK;
+import static com.google.firebase.storage.FirebaseStorage.getInstance;
 
 public class PersonalPage extends Fragment {
 
@@ -114,6 +115,7 @@ public class PersonalPage extends Fragment {
         user= firebaseAuth.getCurrentUser();
         firebaseDatabase= FirebaseDatabase.getInstance();
         databaseReference= firebaseDatabase.getReference("Users");
+        storageReference = getInstance().getReference(); //firebase storage reference
 
         firstNamePro = view.findViewById(R.id.firstNamePro);
         lastNamePro = view.findViewById(R.id.lastNamePro);
@@ -141,8 +143,8 @@ public class PersonalPage extends Fragment {
                     String address =""+ ds.child("address").getValue();
                     String UserName =""+ ds.child("userName").getValue();
                     String email =""+ ds.child("email").getValue();
-                    String cover =""+ ds.child("imageUrl").getValue();
-                    String image =""+ ds.child("cover").getValue();
+                    String cover =""+ ds.child("cover").getValue();
+                    String image =""+ ds.child("imageUrl").getValue();
 
                     firstNamePro.setText(firstName);
                     lastNamePro.setText(lastName);
@@ -591,6 +593,23 @@ public class PersonalPage extends Fragment {
                                         for (DataSnapshot ds : dataSnapshot.getChildren()) {
                                             String child = ds.getKey();
                                             dataSnapshot.getRef().child(child).child("uDp").setValue(downloadUri.toString());
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                    }
+                                });
+
+                                DatabaseReference ref1 = FirebaseDatabase.getInstance().getReference("Users");
+                                Query query1 = ref1.orderByChild("uid").equalTo(uid);
+                                query1.addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                        for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                                            String child = ds.getKey();
+                                            dataSnapshot.getRef().child(child).child("imageUrl").setValue(downloadUri.toString());
                                         }
                                     }
 
