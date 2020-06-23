@@ -13,10 +13,6 @@
             android:icon="@drawable/ic_person_black_24dp"
             android:title="@string/menu_personalPage" />
         <item
-            android:id="@+id/nav_blogPost"
-            android:icon="@drawable/ic_announcement_black_24dp"
-            android:title="@string/menu_blogPost" />
-        <item
             android:id="@+id/nav_chats"
             android:icon="@drawable/ic_chat_black_24dp"
             android:title="App Users" />
