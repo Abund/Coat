@@ -276,6 +276,9 @@ public class MainActivity extends AppCompatActivity {
                             //if user is signing in first time then get and show user info from google account
                             if (task.getResult().getAdditionalUserInfo().isNewUser()){
                                 updateUI(user);
+                            }else{
+                                Intent at = new Intent(MainActivity.this, HomeScreen.class);
+                                startActivity(at);
                             }
                         } else {
                             // If sign in fails, display a message to the user.

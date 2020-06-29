@@ -194,17 +194,25 @@ public class HomeScreen extends AppCompatActivity
                 user=dataSnapshot.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).getValue(User.class);
                 profileName.setText(user.getFirstName()+" "+user.getLastName());
                 final User finalUser = user;
-                Picasso.get().load(user.getImageUrl()).networkPolicy(NetworkPolicy.OFFLINE).into(imageViewProfile, new Callback() {
-                    @Override
-                    public void onSuccess() {
+//                Picasso.get().load(user.getImageUrl()).networkPolicy(NetworkPolicy.OFFLINE).into(imageViewProfile, new Callback() {
+//                    @Override
+//                    public void onSuccess() {
+//
+//                    }
+//
+//                    @Override
+//                    public void onError(Exception e) {
+//                        Picasso.get().load(finalUser.getImageUrl()).into(imageViewProfile);
+//                    }
+//                });
 
-                    }
-
-                    @Override
-                    public void onError(Exception e) {
-                        Picasso.get().load(finalUser.getImageUrl()).into(imageViewProfile);
-                    }
-                });
+                try {
+                    //if image is received then set
+                    Picasso.get().load(user.getImageUrl()).into(imageViewProfile);
+                } catch (Exception e) {
+                    //if there is any exception while getting image then set default
+                    Picasso.get().load(R.drawable.ic_default_img).into(imageViewProfile);
+                }
             }
 
             @Override

@@ -204,7 +204,7 @@ public class PersonalPage extends Fragment {
         // Inflate the menu; this adds items to the action bar if it is present.
         inflater.inflate(R.menu.homescreen, menu);
         super.onCreateOptionsMenu(menu,inflater);
-        //menu.findItem(R.id.action_search).setVisible(false);
+        menu.findItem(R.id.action_create_group).setVisible(false);
         MenuItem item = menu.findItem(R.id.action_search);
 
         //v7 searchview ot search user specific posts

@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.coat.GroupCreateActivity;
 import com.example.coat.MainActivity;
 import com.example.coat.R;
 import com.example.coat.adapter.AdapterChatList;
@@ -239,10 +240,10 @@ public class MessageListFragment extends Fragment {
 //            //go to settings activity
 //            startActivity(new Intent(getActivity(), SettingsActivity.class));
 //        }
-//        else if (id==R.id.action_create_group){
-//            //go to GroupCreateActivity activity
-//            startActivity(new Intent(getActivity(), GroupCreateActivity.class));
-//        }
+        else if (id==R.id.action_create_group){
+            //go to GroupCreateActivity activity
+            startActivity(new Intent(getActivity(), GroupCreateActivity.class));
+        }
 
         return super.onOptionsItemSelected(item);
     }
