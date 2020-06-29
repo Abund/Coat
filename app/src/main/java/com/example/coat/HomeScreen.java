@@ -27,18 +27,22 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.view.Gravity;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.coat.adapter.AdapterPost;
 import com.example.coat.fragments.ChatRooms;
 import com.example.coat.fragments.Chats;
+import com.example.coat.fragments.GroupChatsFragment;
 import com.example.coat.fragments.HomeFragment;
 import com.example.coat.fragments.MessageListFragment;
 import com.example.coat.fragments.NotificationFragment;
@@ -758,4 +762,42 @@ public class HomeScreen extends AppCompatActivity
 //
 //        return super.onOptionsItemSelected(item);
 //    }
+//@RequiresApi(api = Build.VERSION_CODES.KITKAT)
+//private void showMoreOptions() {
+//    //popup menu to show more options
+//    PopupMenu popupMenu = new PopupMenu(this, navigationView, Gravity.END);
+//    //items to show in menu
+//    popupMenu.getMenu().add(Menu.NONE,0,0, "Notifications");
+//    popupMenu.getMenu().add(Menu.NONE,1,0, "Group Chats");
+//
+//    //menu clicks
+//    popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+//        @Override
+//        public boolean onMenuItemClick(MenuItem item) {
+//            int id = item.getItemId();
+//            if (id == 0){
+//                //notifications clicked
+//
+//                //Notifications fragment transaction
+//                actionBar.setTitle("Notifications");//change actionbar title
+//                NotificationFragment fragment5 = new NotificationFragment();
+//                FragmentTransaction ft5 = getSupportFragmentManager().beginTransaction();
+//                ft5.replace(R.id.content, fragment5, "");
+//                ft5.commit();
+//            }
+//            else if (id == 1){
+//                //group chats clicked
+//
+//                //Notifications fragment transaction
+//                actionBar.setTitle("Group Chats");//change actionbar title
+//                GroupChatsFragment fragment6 = new GroupChatsFragment();
+//                FragmentTransaction ft6 = getSupportFragmentManager().beginTransaction();
+//                ft6.replace(R.id.content, fragment6, "");
+//                ft6.commit();
+//            }
+//            return false;
+//        }
+//    });
+//    popupMenu.show();
+//}
 }
