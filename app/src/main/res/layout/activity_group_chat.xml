@@ -36,7 +36,9 @@
                 android:layout_centerVertical="true"
                 android:textColor="@color/colorWhite"
                 android:textSize="18sp"
-                android:textStyle="bold"/>
+                android:textStyle="bold"
+                android:layout_toRightOf="@+id/groupIconIv"
+                android:layout_marginLeft="10dp" />
 
         </RelativeLayout>
 
