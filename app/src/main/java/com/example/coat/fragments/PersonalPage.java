@@ -256,7 +256,7 @@ public class PersonalPage extends Fragment {
         }else if (id == R.id.action_add_post) {
             startActivity(new Intent(getActivity(), AddPostActivity.class));
 
-        }else if (id==R.id.action_settings){
+        }else if (id==R.id.actionSetting){
             //go to settings activity
             startActivity(new Intent(getActivity(), SettingsActivity.class));
         }
