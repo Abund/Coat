@@ -54,7 +54,8 @@
             android:layout_height="wrap_content"
             android:text="Edit Group"
             android:padding="5dp"
-            android:textColor="@color/colorBlack"/>
+            android:textColor="@color/colorBlack"
+            android:drawableLeft="@drawable/ic_edit_white" />
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
@@ -70,7 +71,8 @@
             android:layout_height="wrap_content"
             android:text="Add Participant"
             android:padding="5dp"
-            android:textColor="@color/colorBlack"/>
+            android:textColor="@color/colorBlack"
+            android:drawableLeft="@drawable/ic_addperson_white" />
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
