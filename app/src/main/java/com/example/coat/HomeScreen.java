@@ -694,7 +694,7 @@ public class HomeScreen extends AppCompatActivity
             replaceFragment(newFragment);
 
         } else if (id == R.id.nav_chatRooms) {
-            Fragment newFragment =  new ChatRooms();
+            Fragment newFragment =  new GroupChatsFragment();
             replaceFragment(newFragment);
 
         }
