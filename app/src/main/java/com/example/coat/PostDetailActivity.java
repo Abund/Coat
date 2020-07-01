@@ -688,6 +688,9 @@ public class PostDetailActivity extends AppCompatActivity {
         //hide some menu items
         menu.findItem(R.id.action_add_post).setVisible(false);
         menu.findItem(R.id.action_search).setVisible(false);
+        menu.findItem(R.id.action_add_participant).setVisible(false);
+        menu.findItem(R.id.action_groupinfo).setVisible(false);
+        menu.findItem(R.id.action_create_group).setVisible(false);
         //menu.findItem(R.id.action_groupinfo).setVisible(false);
         return super.onCreateOptionsMenu(menu);
     }

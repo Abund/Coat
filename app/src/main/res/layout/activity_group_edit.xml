@@ -47,7 +47,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/updateGroupBtn"
         android:layout_alignParentEnd="true"
-        android:src="@drawable/ic_done_white"
+        android:src="@drawable/ic_baseline_done_all_24"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true" />
 

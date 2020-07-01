@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import com.example.coat.GroupCreateActivity;
 import com.example.coat.MainActivity;
 import com.example.coat.R;
+import com.example.coat.SettingsActivity;
 import com.example.coat.adapter.AdapterChatList;
 import com.example.coat.model.ChatList;
 import com.example.coat.model.Chats;
@@ -223,6 +224,7 @@ public class MessageListFragment extends Fragment {
         menu.findItem(R.id.action_add_post).setVisible(false);
         menu.findItem(R.id.action_add_participant).setVisible(false);
         menu.findItem(R.id.action_groupinfo).setVisible(false);
+        menu.findItem(R.id.action_create_group).setVisible(false);
 
         super.onCreateOptionsMenu(menu, inflater);
     }
@@ -236,10 +238,10 @@ public class MessageListFragment extends Fragment {
             firebaseAuth.signOut();
             checkUserStatus();
         }
-//        else if (id==R.id.action_settings){
-//            //go to settings activity
-//            startActivity(new Intent(getActivity(), SettingsActivity.class));
-//        }
+        else if (id==R.id.action_settings){
+            //go to settings activity
+            startActivity(new Intent(getActivity(), SettingsActivity.class));
+        }
         else if (id==R.id.action_create_group){
             //go to GroupCreateActivity activity
             startActivity(new Intent(getActivity(), GroupCreateActivity.class));

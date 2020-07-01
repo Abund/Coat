@@ -24,7 +24,7 @@
                 android:layout_width="35dp"
                 android:layout_height="35dp"
                 android:layout_centerVertical="true"
-                android:src="@drawable/ic_group_white"/>
+                android:src="@drawable/ic_group_black_24dp"/>
 
             <TextView
                 android:id="@+id/groupTitleTv"
@@ -86,7 +86,7 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:background="@null"
-            android:src="@drawable/ic_send" />
+            android:src="@drawable/ic_send_black_24dp" />
     </LinearLayout>
 
 </RelativeLayout>

@@ -85,6 +85,10 @@ public class Chats extends Fragment {
 
         menu.findItem(R.id.action_add_post).setVisible(false);
         MenuItem item = menu.findItem(R.id.action_search);
+        menu.findItem(R.id.action_add_post).setVisible(false);
+        menu.findItem(R.id.action_add_participant).setVisible(false);
+        menu.findItem(R.id.action_groupinfo).setVisible(false);
+        menu.findItem(R.id.action_create_group).setVisible(false);
         SearchView searchView= (SearchView)MenuItemCompat.getActionView(item);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override

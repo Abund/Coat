@@ -20,6 +20,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.coat.AddPostActivity;
+import com.example.coat.GroupCreateActivity;
 import com.example.coat.HomeScreen;
 import com.example.coat.MainActivity;
 import com.example.coat.R;
@@ -141,6 +142,9 @@ public class HomeFragment extends Fragment {
         //menu.findItem(R.id.action_search).setVisible(false);
         //menu.findItem(R.id.action_search).setVisible(false);
         MenuItem item = menu.findItem(R.id.action_search);
+        menu.findItem(R.id.action_add_participant).setVisible(false);
+        menu.findItem(R.id.action_groupinfo).setVisible(false);
+        menu.findItem(R.id.action_create_group).setVisible(false);
         SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -186,6 +190,9 @@ public class HomeFragment extends Fragment {
         }else if (id==R.id.action_settings){
             //go to settings activity
             startActivity(new Intent(getActivity(), SettingsActivity.class));
+        }else if (id==R.id.action_create_group){
+            //go to GroupCreateActivity activity
+            startActivity(new Intent(getActivity(), GroupCreateActivity.class));
         }
 
         return super.onOptionsItemSelected(item);
