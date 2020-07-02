@@ -7,6 +7,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.widget.SearchView;
 import androidx.core.view.MenuItemCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -193,9 +195,28 @@ public class HomeFragment extends Fragment {
         }else if (id==R.id.action_create_group){
             //go to GroupCreateActivity activity
             startActivity(new Intent(getActivity(), GroupCreateActivity.class));
+        }else if (id==R.id.nav_notification){
+            //Notifications fragment transaction
+            Fragment newFragment =  new NotificationFragment();
+            replaceFragment(newFragment);
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void replaceFragment(Fragment destFragment)
+    {
+        // First get FragmentManager object.
+        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+
+        // Begin Fragment transaction.
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+        // Replace the layout holder with the required Fragment object.
+        fragmentTransaction.replace(R.id.content_frame, destFragment);
+
+        // Commit the Fragment replace action.
+        fragmentTransaction.addToBackStack(null).commit();
     }
 
     @Override

@@ -81,8 +81,8 @@ public class AdapterNotification extends RecyclerView.Adapter<AdapterNotificatio
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                            String name = "" + ds.child("name").getValue();
-                            String image = "" + ds.child("image").getValue();
+                            String name = "" + ds.child("firstName").getValue();
+                            String image = "" + ds.child("imageUrl").getValue();
                             String email = "" + ds.child("email").getValue();
 
                             //add to model
