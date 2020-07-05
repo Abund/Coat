@@ -100,9 +100,11 @@ public class AdapterGroupChat extends RecyclerView.Adapter<AdapterGroupChat.Hold
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         for (DataSnapshot ds: dataSnapshot.getChildren()){
-                            String name = ""+ds.child("name").getValue();
+                            String name = ""+ds.child("firstName").getValue();
+                            String nameLast = ""+ds.child("lastName").getValue();
 
-                            holder.nameTv.setText(name);
+                            String fullName = name+" "+nameLast;
+                            holder.nameTv.setText(fullName);
                         }
                     }
 

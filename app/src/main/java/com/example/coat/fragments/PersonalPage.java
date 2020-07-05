@@ -157,10 +157,16 @@ public class PersonalPage extends Fragment {
 
                     try {
                         //if image is received then set
-                        Picasso.get().load(image).into(avatarIv);
+                        //Picasso.get().load(image).into(avatarIv);
+
+                        if(image==""){
+                            Picasso.get().load(R.drawable.ic_default_img).into(avatarIv);
+                        }else {
+                            Picasso.get().load(image).into(avatarIv);
+                        }
                     } catch (Exception e) {
                         //if there is any exception while getting image then set default
-                        //Picasso.get().load(R.drawable.ic_default_img_white).into(avatarIv);
+                        Picasso.get().load(R.drawable.ic_account_circle_black_24dp).into(avatarIv);
                     }
 
                     try {

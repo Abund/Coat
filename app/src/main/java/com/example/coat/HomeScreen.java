@@ -212,10 +212,16 @@ public class HomeScreen extends AppCompatActivity
 
                 try {
                     //if image is received then set
-                    Picasso.get().load(user.getImageUrl()).into(imageViewProfile);
+
+                    if(user.getImageUrl()==""){
+                        Picasso.get().load(R.drawable.ic_default_img).into(imageViewProfile);
+                    }else {
+                        Picasso.get().load(user.getImageUrl()).into(imageViewProfile);
+                    }
+
                 } catch (Exception e) {
                     //if there is any exception while getting image then set default
-                    Picasso.get().load(R.drawable.ic_default_img).into(imageViewProfile);
+                    //Picasso.get().load(R.drawable.ic_default_img).into(imageViewProfile);
                 }
             }
 

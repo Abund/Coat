@@ -91,7 +91,7 @@ public class AdapterChat extends RecyclerView.Adapter<AdapterChat.MyHolder>{
 
         //set seen/delivered status of message
         if (position==chatsList.size()-1){
-            if (chatsList.get(position).isSeen()){
+            if (chatsList.get(position).getIsSeen()){
                 holder.isSeen.setText("Seen");
             }
             else {

@@ -578,6 +578,7 @@ public class MessageActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 User user = dataSnapshot.getValue(User.class);
                 if(notify){
+                    System.out.println(user.getFirstName()+"ggggggg");
                     sendNotification(hisUid,user.getFirstName(),message);
                 }
                 notify=false;
