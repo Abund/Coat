@@ -14,10 +14,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light">
-        <activity android:name=".GroupEditActivity"></activity>
+        <activity android:name=".PsycActivity"></activity>
+        <activity android:name=".GroupEditActivity" />
         <activity android:name=".GroupInfoActivity" />
         <activity android:name=".GroupParticipantAddActivity" />
-        <activity android:name=".GroupChatActivity"
+        <activity
+            android:name=".GroupChatActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".GroupCreateActivity" />
         <activity android:name=".SettingsActivity" />

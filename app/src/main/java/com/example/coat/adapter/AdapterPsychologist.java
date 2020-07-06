@@ -15,6 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.coat.MessageActivity;
+import com.example.coat.PsycActivity;
 import com.example.coat.R;
 import com.example.coat.ThereProfileActivity;
 import com.example.coat.model.Psychologist;
@@ -72,50 +73,17 @@ public class AdapterPsychologist extends RecyclerView.Adapter<AdapterPsychologis
         }catch (Exception e){
 
         }
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+//                Toast.makeText(context,""+email,Toast.LENGTH_SHORT).show();
 
+                Intent intent = new Intent(context, PsycActivity.class);
+                intent.putExtra("uid",hisUid);
+                context.startActivity(intent);
+            }
+        });
 
-        //holder.blockIv.setImageResource(R.drawable.ic_unblock);
-        //check if each user if is blocked or not
-        //checkIsBlocked(hisUid, holder, position);
-
-//        holder.itemView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-////                Toast.makeText(context,""+email,Toast.LENGTH_SHORT).show();
-//
-//                AlertDialog.Builder builder = new AlertDialog.Builder(context);
-//                builder.setItems(new String[]{"Profile", "Chat"}, new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialogInterface, int i) {
-//                        if(i==0){
-//                            Intent intent = new Intent(context, ThereProfileActivity.class);
-//                            intent.putExtra("uid",hisUid);
-//                            context.startActivity(intent);
-//                        }
-//                        if(i==1){
-////                            Intent intent= new Intent(context, MessageActivity.class);
-////                            intent.putExtra("hisUid",hisUid);
-////                            context.startActivity(intent);
-//                            imBlockedORNot(hisUid);
-//                        }
-//                    }
-//                });
-//                builder.create().show();
-//            }
-//        });
-
-//        //click to block unblock user
-//        holder.blockIv.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if (userList.get(position).isBlocked()){
-//                    unBlockUser(hisUid);
-//                }
-//                else {
-//                    blockUser(hisUid);
-//                }
-//            }
-//        });
     }
 
     @Override
