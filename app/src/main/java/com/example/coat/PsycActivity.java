@@ -45,6 +45,7 @@ public class PsycActivity extends AppCompatActivity implements DatePickerDialog.
 
     FirebaseAuth firebaseAuth;
     String uid;
+    private String timeStamp;
 
     //views from xml
     private LinearLayout timeLayout;
@@ -143,6 +144,7 @@ public class PsycActivity extends AppCompatActivity implements DatePickerDialog.
                     String userId =""+ ds.child("userId").getValue();
                     String psychologistId =""+ ds.child("psychologistId").getValue();
                     String status =""+ ds.child("status").getValue();
+                    timeStamp=""+ ds.child("timeStamp").getValue();
 
                     if(status.equalsIgnoreCase("booked")){
                         sessionTime.setText(time);
@@ -171,6 +173,7 @@ public class PsycActivity extends AppCompatActivity implements DatePickerDialog.
             @Override
             public void onClick(View v){
 
+                String timestamp = ""+System.currentTimeMillis();
                 DialogFragment datePicker = new DatePickerFragment();
                 datePicker.show(getSupportFragmentManager(),"date picker");
 
@@ -179,8 +182,9 @@ public class PsycActivity extends AppCompatActivity implements DatePickerDialog.
                 //setup required data
                 HashMap<String, Object> hashMap = new HashMap<>();
                 hashMap.put("time", sessionTime.getText());
-                hashMap.put("userId", "");
-                hashMap.put("psychologist", uid);
+                hashMap.put("userId", firebaseAuth.getCurrentUser().getUid());
+                hashMap.put("timeStamp", timestamp);
+                hashMap.put("psychologistId", uid);
                 hashMap.put("status", "Booked");
                 //put this data to firebase
                 databaseReference.child("Bookings").push().setValue(hashMap);
@@ -191,7 +195,26 @@ public class PsycActivity extends AppCompatActivity implements DatePickerDialog.
         cancelBookPsychologist.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
+                DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Bookings");
+                Query query = databaseReference.orderByChild("timeStamp").equalTo(timeStamp);
+                query.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        for(DataSnapshot ds: dataSnapshot.getChildren()){
+                            if(ds.child("userId").getValue().equals(firebaseAuth.getCurrentUser().getUid())){
+                                ds.getRef().removeValue();
+                                Toast.makeText(PsycActivity.this,"Booking was deleted ",Toast.LENGTH_SHORT).show();
+                            }else{
+                                Toast.makeText(PsycActivity.this,"You can only delete your booking ",Toast.LENGTH_SHORT).show();
+                            }
 
+                        }
+                    }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
             }
         });
     }

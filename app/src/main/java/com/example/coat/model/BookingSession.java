@@ -5,15 +5,17 @@ public class BookingSession {
     private String userId;
     private String psychologistId;
     private String status;
+    private String timeStamp;
 
     public BookingSession() {
     }
 
-    public BookingSession(String time, String userId, String psychologistId, String status) {
+    public BookingSession(String time, String userId, String psychologistId, String status, String timeStamp) {
         this.time = time;
         this.userId = userId;
         this.psychologistId = psychologistId;
         this.status = status;
+        this.timeStamp = timeStamp;
     }
 
     public String getTime() {
@@ -46,5 +48,13 @@ public class BookingSession {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getTimeStamp() {
+        return timeStamp;
+    }
+
+    public void setTimeStamp(String timeStamp) {
+        this.timeStamp = timeStamp;
     }
 }
