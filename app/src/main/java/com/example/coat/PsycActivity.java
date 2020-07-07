@@ -4,8 +4,11 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.core.view.MenuItemCompat;
+import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -13,12 +16,15 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.example.coat.adapter.AdapterPost;
+import com.example.coat.fragments.DatePickerFragment;
 import com.example.coat.model.Post;
 import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
@@ -31,7 +37,11 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
-public class PsycActivity extends AppCompatActivity {
+import java.text.DateFormat;
+import java.util.Calendar;
+import java.util.HashMap;
+
+public class PsycActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener {
 
     FirebaseAuth firebaseAuth;
     String uid;
@@ -68,7 +78,7 @@ public class PsycActivity extends AppCompatActivity {
         Intent intent = getIntent();
         uid = intent.getStringExtra("uid");
 
-        Query query = FirebaseDatabase.getInstance().getReference("Users").orderByChild("uid").equalTo(uid);
+        Query query = FirebaseDatabase.getInstance().getReference("Psychologist").orderByChild("uid").equalTo(uid);
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -134,8 +144,8 @@ public class PsycActivity extends AppCompatActivity {
                     String psychologistId =""+ ds.child("psychologistId").getValue();
                     String status =""+ ds.child("status").getValue();
 
-                    sessionTime.setText(time);
                     if(status.equalsIgnoreCase("booked")){
+                        sessionTime.setText(time);
                         timeLayout.setVisibility(View.VISIBLE);
                         bookPsychologist.setVisibility(View.GONE);
                         cancelBookPsychologist.setVisibility(View.VISIBLE);
@@ -156,6 +166,34 @@ public class PsycActivity extends AppCompatActivity {
         });
 
         checkUserStatus();
+
+        bookPsychologist.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+
+                DialogFragment datePicker = new DatePickerFragment();
+                datePicker.show(getSupportFragmentManager(),"date picker");
+
+                DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+
+                //setup required data
+                HashMap<String, Object> hashMap = new HashMap<>();
+                hashMap.put("time", sessionTime.getText());
+                hashMap.put("userId", "");
+                hashMap.put("psychologist", uid);
+                hashMap.put("status", "Booked");
+                //put this data to firebase
+                databaseReference.child("Bookings").push().setValue(hashMap);
+
+            }
+        });
+
+        cancelBookPsychologist.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+
+            }
+        });
     }
 
     @Override
@@ -211,5 +249,21 @@ public class PsycActivity extends AppCompatActivity {
             startActivity(new Intent(this, MainActivity.class));
             finish();
         }
+    }
+
+    @Override
+    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+        Calendar c =Calendar.getInstance();
+        c.set(Calendar.YEAR,year);
+        c.set(Calendar.MONTH,month);
+        //c.set(Calendar.DAY_OF_MONTH,i2);
+        String currentDatePicker = DateFormat.getDateInstance(DateFormat.DATE_FIELD).format(c.getTime());
+        sessionTime.setText(currentDatePicker);
+    }
+
+    @Override
+    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+        //String currentDatePicker =DateFormat.getDateInstance(DateFormat.DATE_FIELD).format(c.getTime());
+        //time.setText(""+i+":"+i1);
     }
 }
