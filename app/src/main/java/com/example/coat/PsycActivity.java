@@ -25,6 +25,7 @@ import android.widget.Toast;
 
 import com.example.coat.adapter.AdapterPost;
 import com.example.coat.fragments.DatePickerFragment;
+import com.example.coat.fragments.TimePickerFragment;
 import com.example.coat.model.Post;
 import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
@@ -48,10 +49,10 @@ public class PsycActivity extends AppCompatActivity implements DatePickerDialog.
     private String timeStamp;
 
     //views from xml
-    private LinearLayout timeLayout;
-    private Button bookPsychologist,cancelBookPsychologist;
+    private LinearLayout timeLayout,bookingsTabs;
+    private Button bookPsychologist,cancelBookPsychologist,chatPsychologist;
     ImageView avatarIv, coverIv;
-    private TextView firstNamePro,sessionTime,lastNamePro,addressPro,userNamePro,emailAddressPro,workExperience,schoolExperience,achievement,skills;
+    private TextView firstNamePro,sessionTime,lastNamePro,addressPro,userNamePro,emailAddressPro,workExperience,schoolExperience,achievement,skills,medicationTime,dateMedi;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +61,7 @@ public class PsycActivity extends AppCompatActivity implements DatePickerDialog.
 
         bookPsychologist = findViewById(R.id.bookPsychologist);
         cancelBookPsychologist = findViewById(R.id.cancelBookPsychologist);
+        bookingsTabs = findViewById(R.id.bookingsTabs);
         sessionTime = findViewById(R.id.sessionTime);
         timeLayout = findViewById(R.id.timeLayout);
         firstNamePro = findViewById(R.id.firstNamePro);
@@ -73,11 +75,29 @@ public class PsycActivity extends AppCompatActivity implements DatePickerDialog.
         schoolExperience= findViewById(R.id.schoolExperience);
         achievement= findViewById(R.id.achievement);
         skills= findViewById(R.id.skills);
+        medicationTime= findViewById(R.id.medicationTime);
+        dateMedi= findViewById(R.id.dateMedi);
+        chatPsychologist= findViewById(R.id.chatPsychologist);
         firebaseAuth = FirebaseAuth.getInstance();
 
         //get uid of clicked user to retrieve his posts
         Intent intent = getIntent();
         uid = intent.getStringExtra("uid");
+
+        dateMedi.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                DialogFragment datePicker = new DatePickerFragment();
+                datePicker.show(getSupportFragmentManager(),"date picker");
+            }
+        });
+        medicationTime.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                DialogFragment timePicker = new TimePickerFragment();
+                timePicker.show(getSupportFragmentManager(),"time picker");
+            }
+        });
 
         Query query = FirebaseDatabase.getInstance().getReference("Psychologist").orderByChild("uid").equalTo(uid);
         query.addValueEventListener(new ValueEventListener() {
@@ -95,7 +115,7 @@ public class PsycActivity extends AppCompatActivity implements DatePickerDialog.
                     String image =""+ ds.child("cover").getValue();
                     String workExperience1 =""+ ds.child("workExperience").getValue();
                     String schoolExperience1 =""+ ds.child("school").getValue();
-                    String achievement1 =""+ ds.child("achievement").getValue();
+                    String achievement1 =""+ ds.child("achievements").getValue();
                     String skills1 =""+ ds.child("skills").getValue();
 
                     firstNamePro.setText(firstName);
@@ -133,7 +153,8 @@ public class PsycActivity extends AppCompatActivity implements DatePickerDialog.
             }
         });
 
-        Query query1 = FirebaseDatabase.getInstance().getReference("Bookings").orderByChild("userId").equalTo(uid);
+        final FirebaseUser firebaseUser1 = FirebaseAuth.getInstance().getCurrentUser();
+        Query query1 = FirebaseDatabase.getInstance().getReference("Bookings").orderByChild("userId").equalTo(firebaseUser1.getUid());
         query1.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -145,12 +166,12 @@ public class PsycActivity extends AppCompatActivity implements DatePickerDialog.
                     String psychologistId =""+ ds.child("psychologistId").getValue();
                     String status =""+ ds.child("status").getValue();
                     timeStamp=""+ ds.child("timeStamp").getValue();
-
+                    sessionTime.setText(time);
                     if(status.equalsIgnoreCase("booked")){
-                        sessionTime.setText(time);
                         timeLayout.setVisibility(View.VISIBLE);
-                        bookPsychologist.setVisibility(View.GONE);
                         cancelBookPsychologist.setVisibility(View.VISIBLE);
+                        bookPsychologist.setVisibility(View.GONE);
+
                     }else if(status.equalsIgnoreCase("cancelled")){
                         timeLayout.setVisibility(View.GONE);
                         bookPsychologist.setVisibility(View.VISIBLE);
@@ -173,15 +194,26 @@ public class PsycActivity extends AppCompatActivity implements DatePickerDialog.
             @Override
             public void onClick(View v){
 
+                String medicationN= medicationTime.getText().toString();
+                String startD = dateMedi.getText().toString();
+
+                if(startD.isEmpty()){
+                    dateMedi.setError("Please enter date");
+                    dateMedi.requestFocus();
+                    return;
+                }
+                else if(medicationN.isEmpty()){
+                    medicationTime.setError("Please enter the start time");
+                    medicationTime.requestFocus();
+                    return;
+                }
+
                 String timestamp = ""+System.currentTimeMillis();
-                DialogFragment datePicker = new DatePickerFragment();
-                datePicker.show(getSupportFragmentManager(),"date picker");
-
+                String realTime=dateMedi.getText()+" "+medicationTime.getText();
                 DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
-
                 //setup required data
                 HashMap<String, Object> hashMap = new HashMap<>();
-                hashMap.put("time", sessionTime.getText());
+                hashMap.put("time", realTime);
                 hashMap.put("userId", firebaseAuth.getCurrentUser().getUid());
                 hashMap.put("timeStamp", timestamp);
                 hashMap.put("psychologistId", uid);
@@ -203,6 +235,11 @@ public class PsycActivity extends AppCompatActivity implements DatePickerDialog.
                         for(DataSnapshot ds: dataSnapshot.getChildren()){
                             if(ds.child("userId").getValue().equals(firebaseAuth.getCurrentUser().getUid())){
                                 ds.getRef().removeValue();
+                                timeLayout.setVisibility(View.GONE);
+                                bookPsychologist.setVisibility(View.VISIBLE);
+                                cancelBookPsychologist.setVisibility(View.GONE);
+                                medicationTime.setText("");
+                                dateMedi.setText("");
                                 Toast.makeText(PsycActivity.this,"Booking was deleted ",Toast.LENGTH_SHORT).show();
                             }else{
                                 Toast.makeText(PsycActivity.this,"You can only delete your booking ",Toast.LENGTH_SHORT).show();
@@ -215,6 +252,16 @@ public class PsycActivity extends AppCompatActivity implements DatePickerDialog.
 
                     }
                 });
+            }
+        });
+
+
+        chatPsychologist.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                Intent intent = new Intent(PsycActivity.this, MessageActivity.class);
+                intent.putExtra("hisUid", uid);
+                startActivity(intent);
             }
         });
     }
@@ -281,12 +328,12 @@ public class PsycActivity extends AppCompatActivity implements DatePickerDialog.
         c.set(Calendar.MONTH,month);
         //c.set(Calendar.DAY_OF_MONTH,i2);
         String currentDatePicker = DateFormat.getDateInstance(DateFormat.DATE_FIELD).format(c.getTime());
-        sessionTime.setText(currentDatePicker);
+        dateMedi.setText(currentDatePicker);
     }
 
     @Override
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
         //String currentDatePicker =DateFormat.getDateInstance(DateFormat.DATE_FIELD).format(c.getTime());
-        //time.setText(""+i+":"+i1);
+        medicationTime.setText(""+hourOfDay+":"+minute);
     }
 }

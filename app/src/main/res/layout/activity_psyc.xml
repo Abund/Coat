@@ -221,39 +221,100 @@ tools:context=".PsycActivity">
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="vertical">
+
                     <LinearLayout
                         android:id="@+id/timeLayout"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:orientation="horizontal"
-                        android:visibility="gone">
-                        <TextView
-                            android:textSize="25sp"
-                            android:visibility="gone"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="you booked a session at :"
-                            />
-                        <TextView
-                            android:id="@+id/sessionTime"
-                            android:textSize="25sp"
-                            android:visibility="gone"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text=":"
-                            />
+                        android:orientation="vertical"
+                        android:visibility="gone"
+                        >
+                        <LinearLayout
+
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="horizontal"
+                            >
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="You booked a session at :"
+                                />
+                            <TextView
+                                android:id="@+id/sessionTime"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text=":"
+                                />
+
+                            <Button
+                                android:id="@+id/cancelBookPsychologist"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text=" Cancel Booking"
+                                android:visibility="gone"
+                                />
+
+                            <Button
+                                android:id="@+id/chatPsychologist"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Chat"
+                                />
+                        </LinearLayout>
+
                     </LinearLayout>
-                    <Button
-                        android:id="@+id/bookPsychologist"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text=" Book Psychologist"/>
-                    <Button
-                        android:id="@+id/cancelBookPsychologist"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text=" Cancel Booking"
-                        android:visibility="gone"/>
+
+                    <LinearLayout
+
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:id="@+id/bookingsTabs"
+                        >
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Place Bookings for this psychologist"
+                            />
+                        <LinearLayout
+
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="horizontal"
+                            >
+                            <TextView
+                                android:id="@+id/dateMedi"
+                                android:layout_width="148dp"
+                                android:layout_height="39dp"
+                                android:ems="10"
+                                android:inputType="date"
+                                android:hint="Select Date"
+                                android:background="@drawable/back" />
+
+                            <TextView
+                                android:id="@+id/medicationTime"
+                                android:layout_width="152dp"
+                                android:layout_height="45dp"
+                                android:layout_marginLeft="10dp"
+                                android:background="@drawable/back"
+                                android:ems="10"
+                                android:hint="Select Time"
+                                android:inputType="time"
+                                />
+
+                            <Button
+                                android:id="@+id/bookPsychologist"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text=" Book Time"/>
+                        </LinearLayout>
+                    </LinearLayout>
+
+
+
+
+
 
                 </LinearLayout>
             </LinearLayout>
