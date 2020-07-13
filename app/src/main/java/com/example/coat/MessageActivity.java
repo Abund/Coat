@@ -153,7 +153,7 @@ public class MessageActivity extends AppCompatActivity {
 
         firebaseAuth=FirebaseAuth.getInstance();
         firebaseDatabase= FirebaseDatabase.getInstance();
-        databaseReference= firebaseDatabase.getReference("Users");
+        databaseReference= firebaseDatabase.getReference("Psychologist");
 
         Query query = databaseReference.orderByChild("uid").equalTo(hisUid);
         query.addValueEventListener(new ValueEventListener() {
@@ -165,6 +165,7 @@ public class MessageActivity extends AppCompatActivity {
                     String onlineStatus=""+ ds.child("onlineStatus").getValue();
                     String typingStatus =""+ ds.child("typingTo").getValue();
                     String image =""+ ds.child("imageUrl").getValue();
+                    System.out.println("jhfyj"+UserName);
                     if(typingStatus.equals(myUid)){
                         userStatusTv.setText("typing...");
                     }else {

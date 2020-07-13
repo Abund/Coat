@@ -34,7 +34,7 @@
             android:inputType="textCapSentences|textMultiLine"
             android:minHeight="120dp"
             android:gravity="start"
-            android:hint="Enter Title"
+            android:hint="Enter Description"
             android:singleLine="true"
             android:layout_height="wrap_content"/>
 

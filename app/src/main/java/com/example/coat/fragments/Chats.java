@@ -180,6 +180,7 @@ public class Chats extends Fragment {
                 for(DataSnapshot ds:dataSnapshot.getChildren()){
                     User user = new User();
                     user = ds.getValue(User.class);
+                    System.out.println("hfhfh--"+user.getUid());
                     if(!user.getUid().equals(firebaseUser.getUid())){
                         userList.add(user);
                     }

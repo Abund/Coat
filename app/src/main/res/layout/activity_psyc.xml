@@ -232,7 +232,7 @@ tools:context=".PsycActivity">
                         <LinearLayout
 
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent"
+                            android:layout_height="wrap_content"
                             android:orientation="horizontal"
                             >
                             <TextView
@@ -252,7 +252,7 @@ tools:context=".PsycActivity">
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text=" Cancel Booking"
-                                android:visibility="gone"
+
                                 />
 
                             <Button
@@ -262,13 +262,144 @@ tools:context=".PsycActivity">
                                 android:text="Chat"
                                 />
                         </LinearLayout>
+                        <TextView
+                            android:id="@+id/timeri"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:text="Time Remaining to booked session"
+                            android:textSize="20dp"
+                            android:textStyle="bold" />
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@android:color/white"
+                            android:orientation="horizontal">
+
+                            <LinearLayout
+                                android:id="@+id/linear_layout_2"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:background="@android:color/black"
+                                android:visibility="visible">
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:orientation="vertical">
+
+                                    <TextView
+                                        android:id="@+id/tv_days"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="center"
+                                        android:text="00"
+                                        android:textColor="@android:color/white"
+                                        android:textSize="20dp"
+                                        android:textStyle="bold" />
+
+                                    <TextView
+                                        android:id="@+id/tv_days_title"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="center"
+                                        android:text="Days"
+                                        android:textColor="@android:color/white"
+                                        android:textSize="20dp"
+                                        android:textStyle="normal" />
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:orientation="vertical">
+
+                                    <TextView
+                                        android:id="@+id/tv_hour"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="center"
+                                        android:text="00"
+                                        android:textColor="@android:color/white"
+                                        android:textSize="20dp"
+                                        android:textStyle="bold" />
+
+                                    <TextView
+                                        android:id="@+id/tv_hour_title"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="center"
+                                        android:text="Hour"
+                                        android:textColor="@android:color/white"
+                                        android:textSize="20dp"
+                                        android:textStyle="normal" />
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:orientation="vertical">
+
+                                    <TextView
+                                        android:id="@+id/tv_minute"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="center"
+                                        android:text="00"
+                                        android:textColor="@android:color/white"
+                                        android:textSize="20dp"
+                                        android:textStyle="bold" />
+
+                                    <TextView
+                                        android:id="@+id/tv_minute_title"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="center"
+                                        android:text="Minute"
+                                        android:textColor="@android:color/white"
+                                        android:textSize="20dp"
+                                        android:textStyle="normal" />
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:orientation="vertical">
+
+                                    <TextView
+                                        android:id="@+id/tv_second"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="center"
+                                        android:text="00"
+                                        android:textColor="@android:color/white"
+                                        android:textSize="20dp"
+                                        android:textStyle="bold" />
+
+                                    <TextView
+                                        android:id="@+id/tv_second_title"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="center"
+                                        android:text="Second"
+                                        android:textColor="@android:color/white"
+                                        android:textSize="20dp"
+                                        android:textStyle="normal" />
+                                </LinearLayout>
+                            </LinearLayout>
+                        </LinearLayout>
+
 
                     </LinearLayout>
 
                     <LinearLayout
 
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_height="wrap_content"
                         android:orientation="vertical"
                         android:id="@+id/bookingsTabs"
                         >
@@ -280,7 +411,7 @@ tools:context=".PsycActivity">
                         <LinearLayout
 
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent"
+                            android:layout_height="wrap_content"
                             android:orientation="horizontal"
                             >
                             <TextView
@@ -309,12 +440,8 @@ tools:context=".PsycActivity">
                                 android:layout_height="wrap_content"
                                 android:text=" Book Time"/>
                         </LinearLayout>
+
                     </LinearLayout>
-
-
-
-
-
 
                 </LinearLayout>
             </LinearLayout>

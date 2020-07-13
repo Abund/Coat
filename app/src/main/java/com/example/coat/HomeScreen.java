@@ -47,6 +47,7 @@ import com.example.coat.fragments.HomeFragment;
 import com.example.coat.fragments.MessageListFragment;
 import com.example.coat.fragments.NotificationFragment;
 import com.example.coat.fragments.PersonalPage;
+import com.example.coat.fragments.PsychologistFragmnet;
 import com.example.coat.fragments.ViewPsychologist;
 import com.example.coat.model.Post;
 import com.example.coat.model.User;
@@ -697,6 +698,11 @@ public class HomeScreen extends AppCompatActivity
         }else if (id == R.id.nav_chatList) {
             actionBar.setTitle("Chat Lists");
             Fragment newFragment =  new MessageListFragment();
+            replaceFragment(newFragment);
+
+        } else if (id == R.id.nav_psyChatList) {
+            actionBar.setTitle("Psychologist Chat Lists");
+            Fragment newFragment =  new PsychologistFragmnet();
             replaceFragment(newFragment);
 
         } else if (id == R.id.nav_chatRooms) {
