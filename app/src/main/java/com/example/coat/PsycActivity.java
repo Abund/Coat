@@ -1,6 +1,7 @@
 package com.example.coat;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.core.view.MenuItemCompat;
@@ -10,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
@@ -40,10 +42,15 @@ import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.concurrent.TimeUnit;
 
 public class PsycActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener {
 
@@ -210,6 +217,46 @@ public class PsycActivity extends AppCompatActivity implements DatePickerDialog.
             }
         });
 
+        final FirebaseUser firebaseUser2 = FirebaseAuth.getInstance().getCurrentUser();
+        Query query2 = FirebaseDatabase.getInstance().getReference("Bookings").orderByChild("userId").equalTo(firebaseUser2.getUid());
+        query2.addValueEventListener(new ValueEventListener() {
+            @RequiresApi(api = Build.VERSION_CODES.O)
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                //check until required data get
+                for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                    String time =""+ ds.child("time").getValue();
+                    String userId =""+ ds.child("userId").getValue();
+                    String psychologistId =""+ ds.child("psychologistId").getValue();
+                    String status =""+ ds.child("status").getValue();
+                    timeStamp=""+ ds.child("timeStamp").getValue();
+                    long diff=0;
+                    try {
+                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                        LocalDateTime dateTime = LocalDateTime.parse(time, formatter);
+                        LocalDateTime dateTime2 = dateTime.plusDays(1);
+
+                        LocalDateTime now = LocalDateTime.now();
+                        if(now.isAfter(dateTime2)){
+                            HashMap<String,Object> hashMap= new HashMap<>();
+                            hashMap.put("status", "timeOut");
+                            ds.getRef().updateChildren(hashMap);
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
         checkUserStatus();
 
         bookPsychologist.setOnClickListener(new View.OnClickListener(){
@@ -304,7 +351,7 @@ public class PsycActivity extends AppCompatActivity implements DatePickerDialog.
                 });
 
 
-                Intent intent = new Intent(PsycActivity.this, MessageActivity.class);
+                Intent intent = new Intent(PsycActivity.this, MessagePsyActivity.class);
                 intent.putExtra("hisUid", uid);
                 startActivity(intent);
             }

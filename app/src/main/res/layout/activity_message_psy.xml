@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+
+    tools:context=".MessagePsyActivity">
+
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?android:attr/actionBarSize"
+        android:background="@color/colorPrimaryDark"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <!--Receiver profile picture-->
+            <com.blogspot.atifsoftwares.circularimageview.CircularImageView
+                android:id="@+id/profileIv"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:src="@drawable/ic_account_circle_black_24dp"
+                android:scaleType="centerCrop"
+                app:c_background_color="@color/colorPrimaryDark"/>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:layout_marginStart="20dp"
+                android:layout_marginLeft="20dp">
+
+                <TextView
+                    android:id="@+id/nameChatTv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="His Name"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/colorWhite"/>
+                <TextView
+                    android:id="@+id/userStatusTv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="online"
+                    android:textStyle="bold"
+                    android:textColor="@color/colorWhite"/>
+
+            </LinearLayout>
+            <!--Add icons to indicate blocked/unblocked-->
+            <ImageView
+                android:layout_marginEnd="5dp"
+                android:id="@+id/blockIv"
+                android:layout_gravity="center_vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_unblock"
+                android:layout_marginRight="5dp" />
+        </LinearLayout>
+    </androidx.appcompat.widget.Toolbar>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/chat_recycler"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/toolbar"
+        android:layout_above="@+id/chatLayout"/>
+    <LinearLayout
+        android:id="@+id/chatLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:textColor="@color/colorWhite"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <!--ImageButton: to send image-->
+        <ImageButton
+            android:id="@+id/attachBtn"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@null"
+            android:src="@drawable/ic_attatch_black"/>
+
+        <EditText
+            android:id="@+id/messageEt"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:background="@null"
+            android:inputType="textCapSentences"
+            android:hint="Start typing"
+            android:padding="15dp"
+            android:layout_height="wrap_content"/>
+
+        <ImageButton
+            android:id="@+id/sendBtn"
+            android:background="@null"
+            android:src="@drawable/ic_send_black_24dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"/>
+
+    </LinearLayout>
+
+</RelativeLayout>

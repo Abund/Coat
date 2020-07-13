@@ -75,7 +75,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-public class MessageActivity extends AppCompatActivity {
+public class MessagePsyActivity extends AppCompatActivity {
 
     Toolbar toolbar;
     RecyclerView recyclerView;
@@ -120,7 +120,7 @@ public class MessageActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_message);
+        setContentView(R.layout.activity_message_psy);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -153,7 +153,7 @@ public class MessageActivity extends AppCompatActivity {
 
         firebaseAuth=FirebaseAuth.getInstance();
         firebaseDatabase= FirebaseDatabase.getInstance();
-        databaseReference= firebaseDatabase.getReference("Users");
+        databaseReference= firebaseDatabase.getReference("Psychologist");
 
         Query query = databaseReference.orderByChild("uid").equalTo(hisUid);
         query.addValueEventListener(new ValueEventListener() {
@@ -202,7 +202,7 @@ public class MessageActivity extends AppCompatActivity {
                 notify=true;
                 String message = messageEt.getText().toString().trim();
                 if(TextUtils.isEmpty(message)){
-                    Toast.makeText(MessageActivity.this,"Cannot send empty message",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MessagePsyActivity.this,"Cannot send empty message",Toast.LENGTH_SHORT).show();
                 }else{
                     sendMessage(message);
                 }
@@ -255,7 +255,6 @@ public class MessageActivity extends AppCompatActivity {
         readMessage();
         checkIsBlocked();
         seenMessage();
-
     }
 
     private void checkIsBlocked() {
@@ -296,7 +295,7 @@ public class MessageActivity extends AppCompatActivity {
                     @Override
                     public void onSuccess(Void aVoid) {
                         //blocked successfully
-                        Toast.makeText(MessageActivity.this, "Blocked Successfully...", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MessagePsyActivity.this, "Blocked Successfully...", Toast.LENGTH_SHORT).show();
 
                         blockIv.setImageResource(R.drawable.ic_block_black_24dp);
                     }
@@ -305,7 +304,7 @@ public class MessageActivity extends AppCompatActivity {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         //failed to block
-                        Toast.makeText(MessageActivity.this, "Failed: "+e.getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MessagePsyActivity.this, "Failed: "+e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
     }
@@ -326,7 +325,7 @@ public class MessageActivity extends AppCompatActivity {
                                             @Override
                                             public void onSuccess(Void aVoid) {
                                                 //unblocked successfully
-                                                Toast.makeText(MessageActivity.this, "Unbloked Successfully...", Toast.LENGTH_SHORT).show();
+                                                Toast.makeText(MessagePsyActivity.this, "Unbloked Successfully...", Toast.LENGTH_SHORT).show();
                                                 blockIv.setImageResource(R.drawable.ic_unblock);
                                             }
                                         })
@@ -334,7 +333,7 @@ public class MessageActivity extends AppCompatActivity {
                                             @Override
                                             public void onFailure(@NonNull Exception e) {
                                                 //failed to unblock
-                                                Toast.makeText(MessageActivity.this, "Failed: "+e.getMessage(), Toast.LENGTH_SHORT).show();
+                                                Toast.makeText(MessagePsyActivity.this, "Failed: "+e.getMessage(), Toast.LENGTH_SHORT).show();
                                             }
                                         });
                             }
@@ -545,7 +544,7 @@ public class MessageActivity extends AppCompatActivity {
                             chats.getReceiver().equals(hisUid)&&chats.getSender().equals(myUid)){
                         chatsList.add(chats);
                     }
-                    adapterChat = new AdapterChat(MessageActivity.this,chatsList,hisImage);
+                    adapterChat = new AdapterChat(MessagePsyActivity.this,chatsList,hisImage);
                     adapterChat.notifyDataSetChanged();
                     recyclerView.setAdapter(adapterChat);
                 }
@@ -880,6 +879,4 @@ public class MessageActivity extends AppCompatActivity {
 
 
     }
-
-
 }

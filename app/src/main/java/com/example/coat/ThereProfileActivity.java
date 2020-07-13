@@ -83,8 +83,8 @@ public class ThereProfileActivity extends AppCompatActivity {
                     String address =""+ ds.child("address").getValue();
                     String UserName =""+ ds.child("userName").getValue();
                     String email =""+ ds.child("email").getValue();
-                    String cover =""+ ds.child("image").getValue();
-                    String image =""+ ds.child("cover").getValue();
+                    String image =""+ ds.child("image").getValue();
+                    String cover =""+ ds.child("cover").getValue();
 
                     firstNamePro.setText(firstName);
                     lastNamePro.setText(lastName);

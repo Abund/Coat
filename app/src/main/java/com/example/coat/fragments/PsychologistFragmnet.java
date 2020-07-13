@@ -19,8 +19,11 @@ import com.example.coat.MainActivity;
 import com.example.coat.R;
 import com.example.coat.SettingsActivity;
 import com.example.coat.adapter.AdapterChatList;
+import com.example.coat.adapter.AdapterPsyChatList;
+import com.example.coat.model.BookingSession;
 import com.example.coat.model.ChatList;
 import com.example.coat.model.Chats;
+import com.example.coat.model.Psychologist;
 import com.example.coat.model.User;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -42,7 +45,7 @@ public class PsychologistFragmnet extends Fragment {
     List<User> userList;
     DatabaseReference reference;
     FirebaseUser currentUser;
-    AdapterChatList adapterChatlist;
+    AdapterPsyChatList adapterChatlist;
 
     public PsychologistFragmnet() {
         // Required empty public constructor
@@ -96,21 +99,48 @@ public class PsychologistFragmnet extends Fragment {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 userList.clear();
                 for (DataSnapshot ds: dataSnapshot.getChildren()){
-                    User user = ds.getValue(User.class);
+                    final User user = ds.getValue(User.class);
                     for (ChatList chatlist: chatlistList){
                         if (user.getUid() != null && user.getUid().equals(chatlist.getId())){
-                            userList.add(user);
+                            //userList.add(user);
+                            DatabaseReference reference1= FirebaseDatabase.getInstance().getReference("Bookings");
+                            reference1.addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    //userList.clear();
+                                    for(DataSnapshot ds:dataSnapshot.getChildren()){
+                                        //User user = new User();
+                                        BookingSession bookingSession = ds.getValue(BookingSession.class);
+                                        System.out.println("jsat"+user.getUid());
+                                        //userList.add(user);
+                                        if(bookingSession.getPsychologistId().equals(user.getUid())){
+                                            if(bookingSession.getStatus().equalsIgnoreCase("timeOut")){
+
+                                            }else {
+                                                userList.add(user);
+                                            }
+
+                                        }
+                                    }
+                                    //adapter
+                                    adapterChatlist = new AdapterPsyChatList(getContext(), userList);
+                                    //setAdapter
+                                    recyclerView.setAdapter(adapterChatlist);
+                                    //set last message
+                                    for (int i=0; i<userList.size(); i++){
+                                        lastMessage(userList.get(i).getUid());
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                }
+                            });
                             break;
                         }
                     }
-                    //adapter
-                    adapterChatlist = new AdapterChatList(getContext(), userList);
-                    //setAdapter
-                    recyclerView.setAdapter(adapterChatlist);
-                    //set last message
-                    for (int i=0; i<userList.size(); i++){
-                        lastMessage(userList.get(i).getUid());
-                    }
+
                 }
             }
 
