@@ -1,6 +1,8 @@
 package com.example.coat.adapter;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,10 +13,19 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.coat.MainActivity;
 import com.example.coat.MessageActivity;
 import com.example.coat.MessagePsyActivity;
 import com.example.coat.R;
+import com.example.coat.ThereProfileActivity;
 import com.example.coat.model.User;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 import java.util.HashMap;
@@ -26,12 +37,14 @@ public class AdapterPsyChatList extends RecyclerView.Adapter<AdapterPsyChatList.
     Context context;
     List<User> userList; //get user info
     private HashMap<String, String> lastMessageMap;
+    private String timeStamp;
 
     //constructor
-    public AdapterPsyChatList(Context context, List<User> userList) {
+    public AdapterPsyChatList(Context context, List<User> userList,String timeStamp) {
         this.context = context;
         this.userList = userList;
         lastMessageMap = new HashMap<>();
+        this.timeStamp=timeStamp;
     }
 
     @NonNull
@@ -76,17 +89,64 @@ public class AdapterPsyChatList extends RecyclerView.Adapter<AdapterPsyChatList.
         }
 
         //handle click of user in chatlist
+//        myHolder.itemView.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                //start chat activity with that user
+//                Intent intent = new Intent(context, MessagePsyActivity.class);
+//                intent.putExtra("hisUid", hisUid);
+//                context.startActivity(intent);
+//            }
+//        });
+
         myHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                //start chat activity with that user
-                Intent intent = new Intent(context, MessagePsyActivity.class);
-                intent.putExtra("hisUid", hisUid);
-                context.startActivity(intent);
+            public void onClick(View view) {
+//                Toast.makeText(context,""+email,Toast.LENGTH_SHORT).show();
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                builder.setItems(new String[]{"Chat", "Delete"}, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        if(i==0){
+                            //start chat activity with that user
+                            Intent intent = new Intent(context, MessagePsyActivity.class);
+                            intent.putExtra("hisUid", hisUid);
+                            context.startActivity(intent);
+                        }
+                        if(i==1){
+                            final DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Bookings");
+                            Query query = databaseReference.orderByChild("timeStamp").equalTo(timeStamp);
+                            query.addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    for(DataSnapshot ds: dataSnapshot.getChildren()){
+                                        if(ds.child("userId").getValue().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())){
+                                            HashMap<String,Object> hashMap= new HashMap<>();
+                                            hashMap.put("status", "deleted");
+                                            ds.getRef().updateChildren(hashMap);
+                                        }else{
+                                        }
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                }
+                            });
+                        }
+                    }
+                });
+                builder.create().show();
             }
         });
 
+
+
     }
+
+
 
     public void setLastMessageMap(String userId, String lastMessage){
         lastMessageMap.put(userId, lastMessage);

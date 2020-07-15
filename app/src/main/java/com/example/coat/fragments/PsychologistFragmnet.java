@@ -5,8 +5,10 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -31,9 +33,11 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class PsychologistFragmnet extends Fragment {
@@ -46,6 +50,8 @@ public class PsychologistFragmnet extends Fragment {
     DatabaseReference reference;
     FirebaseUser currentUser;
     AdapterPsyChatList adapterChatlist;
+    String timeStamp;
+    private ArrayList<String> bloodPressureKey;
 
     public PsychologistFragmnet() {
         // Required empty public constructor
@@ -66,6 +72,7 @@ public class PsychologistFragmnet extends Fragment {
 
         firebaseAuth = FirebaseAuth.getInstance();
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        bloodPressureKey= new ArrayList<>();
 
         recyclerView = view.findViewById(R.id.PsyRecyclerView);
 
@@ -111,21 +118,24 @@ public class PsychologistFragmnet extends Fragment {
                                     for(DataSnapshot ds:dataSnapshot.getChildren()){
                                         //User user = new User();
                                         BookingSession bookingSession = ds.getValue(BookingSession.class);
-                                        System.out.println("jsat"+user.getUid());
+                                        bloodPressureKey.add(ds.getKey());
                                         //userList.add(user);
                                         if(bookingSession.getPsychologistId().equals(user.getUid())){
-                                            if(bookingSession.getStatus().equalsIgnoreCase("timeOut")){
-
-                                            }else {
+                                            if(bookingSession.getStatus().equals("chatting")){
                                                 userList.add(user);
+                                                timeStamp=bookingSession.getTimeStamp();
+                                            }else {
+
                                             }
 
                                         }
                                     }
                                     //adapter
-                                    adapterChatlist = new AdapterPsyChatList(getContext(), userList);
+                                    adapterChatlist = new AdapterPsyChatList(getContext(), userList,timeStamp);
+                                    new ItemTouchHelper(simpleCallback).attachToRecyclerView(recyclerView);
                                     //setAdapter
                                     recyclerView.setAdapter(adapterChatlist);
+                                    recyclerView.invalidate();
                                     //set last message
                                     for (int i=0; i<userList.size(); i++){
                                         lastMessage(userList.get(i).getUid());
@@ -241,4 +251,26 @@ public class PsychologistFragmnet extends Fragment {
 
         return super.onOptionsItemSelected(item);
     }
+
+    ItemTouchHelper.SimpleCallback simpleCallback= new ItemTouchHelper.SimpleCallback(0,ItemTouchHelper.RIGHT|ItemTouchHelper.LEFT) {
+        @Override
+        public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+            return false;
+        }
+
+        @Override
+        public void onSwiped(@NonNull final RecyclerView.ViewHolder viewHolder, int direction) {
+
+            DatabaseReference databaseReference= FirebaseDatabase.getInstance().getReference().child("Bookings")
+                    .child(bloodPressureKey.get(viewHolder.getAdapterPosition()));
+
+            Log.e("eee2",""+viewHolder.getAdapterPosition());
+            HashMap<String,Object> hashMap= new HashMap<>();
+            hashMap.put("status", "deleted");
+
+            databaseReference.getRef().updateChildren(hashMap);
+            loadChats();
+        }
+    };
+
 }
