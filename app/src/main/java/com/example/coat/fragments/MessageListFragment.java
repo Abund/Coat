@@ -4,9 +4,12 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.SearchView;
+import androidx.core.view.MenuItemCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -19,6 +22,7 @@ import com.example.coat.MainActivity;
 import com.example.coat.R;
 import com.example.coat.SettingsActivity;
 import com.example.coat.adapter.AdapterChatList;
+import com.example.coat.adapter.AdapterUser;
 import com.example.coat.model.ChatList;
 import com.example.coat.model.Chats;
 import com.example.coat.model.User;
@@ -213,6 +217,44 @@ public class MessageListFragment extends Fragment {
         }
     }
 
+    private void searchUser(final String query) {
+        userList = new ArrayList<>();
+        reference = FirebaseDatabase.getInstance().getReference("Users");
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                userList.clear();
+                for (DataSnapshot ds: dataSnapshot.getChildren()){
+                    User user = ds.getValue(User.class);
+                    for (ChatList chatlist: chatlistList){
+                        if (user.getUid() != null && user.getUid().equals(chatlist.getId())){
+
+                            if(user.getFirstName().toLowerCase().contains(query.toLowerCase())||
+                                    user.getLastName().toLowerCase().contains(query.toLowerCase())||
+                                    user.getEmail().toLowerCase().contains(query.toLowerCase())){
+
+                                userList.add(user);
+                            }
+                            break;
+                        }
+                    }
+                    //adapter
+                    adapterChatlist = new AdapterChatList(getContext(), userList);
+                    //setadapter
+                    recyclerView.setAdapter(adapterChatlist);
+                    //set last message
+                    for (int i=0; i<userList.size(); i++){
+                        lastMessage(userList.get(i).getUid());
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
 
     /*inflate options menu*/
     @Override
@@ -225,6 +267,30 @@ public class MessageListFragment extends Fragment {
         menu.findItem(R.id.action_add_participant).setVisible(false);
         menu.findItem(R.id.action_groupinfo).setVisible(false);
         menu.findItem(R.id.action_create_group).setVisible(false);
+
+        MenuItem item = menu.findItem(R.id.action_search);
+        SearchView searchView= (SearchView) MenuItemCompat.getActionView(item);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                if(!TextUtils.isEmpty(query.trim())){
+                    searchUser(query);
+                }else {
+                    loadChats();
+                }
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                if(!TextUtils.isEmpty(newText.trim())){
+                    searchUser(newText);
+                }else {
+                    loadChats();
+                }
+                return false;
+            }
+        });
 
         super.onCreateOptionsMenu(menu, inflater);
     }

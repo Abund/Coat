@@ -4,10 +4,13 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.SearchView;
+import androidx.core.view.MenuItemCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -22,6 +25,7 @@ import com.example.coat.R;
 import com.example.coat.SettingsActivity;
 import com.example.coat.adapter.AdapterChatList;
 import com.example.coat.adapter.AdapterPsyChatList;
+import com.example.coat.adapter.AdapterUser;
 import com.example.coat.model.BookingSession;
 import com.example.coat.model.ChatList;
 import com.example.coat.model.Chats;
@@ -42,7 +46,6 @@ import java.util.List;
 
 public class PsychologistFragmnet extends Fragment {
 
-    //firebase auth
     FirebaseAuth firebaseAuth;
     RecyclerView recyclerView;
     List<ChatList> chatlistList;
@@ -57,9 +60,9 @@ public class PsychologistFragmnet extends Fragment {
         // Required empty public constructor
     }
 
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        setHasOptionsMenu(true);
         super.onCreate(savedInstanceState);
     }
 
@@ -215,6 +218,76 @@ public class PsychologistFragmnet extends Fragment {
         }
     }
 
+    private void searchUser(final String query) {
+        final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        DatabaseReference reference= FirebaseDatabase.getInstance().getReference("Psychologist");
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                userList.clear();
+                for(DataSnapshot ds:dataSnapshot.getChildren()){
+                    final User user = ds.getValue(User.class);
+
+                    for (ChatList chatlist: chatlistList){
+                        if (user.getUid() != null && user.getUid().equals(chatlist.getId())){
+                            //userList.add(user);
+                            DatabaseReference reference1= FirebaseDatabase.getInstance().getReference("Bookings");
+                            reference1.addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    //userList.clear();
+                                    for(DataSnapshot ds:dataSnapshot.getChildren()){
+                                        //User user = new User();
+                                        BookingSession bookingSession = ds.getValue(BookingSession.class);
+                                        bloodPressureKey.add(ds.getKey());
+                                        //userList.add(user);
+                                        if(bookingSession.getPsychologistId().equals(user.getUid())){
+                                            if(bookingSession.getStatus().equals("chatting")){
+
+                                                if(user.getFirstName().toLowerCase().contains(query.toLowerCase())||
+                                                        user.getLastName().toLowerCase().contains(query.toLowerCase())||
+                                                        user.getEmail().toLowerCase().contains(query.toLowerCase())){
+
+                                                    userList.add(user);
+                                                    timeStamp=bookingSession.getTimeStamp();
+                                                }
+
+                                            }else {
+
+                                            }
+
+                                        }
+                                    }
+                                    //adapter
+                                    adapterChatlist = new AdapterPsyChatList(getContext(), userList,timeStamp);
+                                    new ItemTouchHelper(simpleCallback).attachToRecyclerView(recyclerView);
+                                    //setAdapter
+                                    recyclerView.setAdapter(adapterChatlist);
+                                    recyclerView.invalidate();
+                                    //set last message
+                                    for (int i=0; i<userList.size(); i++){
+                                        lastMessage(userList.get(i).getUid());
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                }
+                            });
+                            break;
+                        }
+                    }
+
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
 
     /*inflate options menu*/
     @Override
@@ -227,6 +300,31 @@ public class PsychologistFragmnet extends Fragment {
         menu.findItem(R.id.action_add_participant).setVisible(false);
         menu.findItem(R.id.action_groupinfo).setVisible(false);
         menu.findItem(R.id.action_create_group).setVisible(false);
+
+        MenuItem item = menu.findItem(R.id.action_search);
+
+        SearchView searchView= (SearchView) MenuItemCompat.getActionView(item);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                if(!TextUtils.isEmpty(query.trim())){
+                    searchUser(query);
+                }else {
+                    loadChats();
+                }
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                if(!TextUtils.isEmpty(newText.trim())){
+                    searchUser(newText);
+                }else {
+                    loadChats();
+                }
+                return false;
+            }
+        });
 
         super.onCreateOptionsMenu(menu, inflater);
     }

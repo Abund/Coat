@@ -136,6 +136,10 @@ public class ThereProfileActivity extends AppCompatActivity {
         //menu.findItem(R.id.action_create_group).setVisible(false); //hide add post from this activiyt
 
         MenuItem item = menu.findItem(R.id.action_search);
+        menu.findItem(R.id.action_add_post).setVisible(false);
+        menu.findItem(R.id.action_add_participant).setVisible(false);
+        menu.findItem(R.id.action_groupinfo).setVisible(false);
+        menu.findItem(R.id.action_create_group).setVisible(false);
         //v7 searchview ot search user specific posts
         SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
 
