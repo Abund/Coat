@@ -117,6 +117,7 @@ tools:context=".PsycActivity">
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
+            android:padding="8dp"
             android:layout_below="@+id/linearLayout">
 
             <LinearLayout
@@ -134,7 +135,7 @@ tools:context=".PsycActivity">
                         android:text="Work Experience:"/>
                     <TextView
                         android:id="@+id/workExperience"
-                        android:textSize="25sp"
+                        android:textSize="15sp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:inputType="textMultiLine"
@@ -156,7 +157,7 @@ tools:context=".PsycActivity">
                         android:text="School Experience:"/>
                     <TextView
                         android:id="@+id/schoolExperience"
-                        android:textSize="25sp"
+                        android:textSize="15sp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="None"
@@ -179,10 +180,9 @@ tools:context=".PsycActivity">
                         />
                     <TextView
                         android:id="@+id/achievement"
-                        android:textSize="25sp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="None"
+                        android:textSize="15sp"
                         android:inputType="textMultiLine"/>
                 </LinearLayout>
             </LinearLayout>
@@ -203,7 +203,7 @@ tools:context=".PsycActivity">
                         />
                     <TextView
                         android:id="@+id/skills"
-                        android:textSize="25sp"
+                        android:textSize="15sp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="None"

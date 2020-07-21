@@ -363,9 +363,9 @@ public class PsychologistFragmnet extends Fragment {
                     .child(bloodPressureKey.get(viewHolder.getAdapterPosition()));
 
             Log.e("eee2",""+viewHolder.getAdapterPosition());
+            Log.e("eee2",""+bloodPressureKey.get(viewHolder.getAdapterPosition()));
             HashMap<String,Object> hashMap= new HashMap<>();
             hashMap.put("status", "deleted");
-
             databaseReference.getRef().updateChildren(hashMap);
             loadChats();
         }

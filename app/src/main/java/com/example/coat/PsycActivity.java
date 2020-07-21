@@ -81,6 +81,8 @@ public class PsycActivity extends AppCompatActivity implements DatePickerDialog.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_psyc);
 
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         bookPsychologist = findViewById(R.id.bookPsychologist);
         cancelBookPsychologist = findViewById(R.id.cancelBookPsychologist);
         bookingsTabs = findViewById(R.id.bookingsTabs);
@@ -136,8 +138,8 @@ public class PsycActivity extends AppCompatActivity implements DatePickerDialog.
                     String address =""+ ds.child("address").getValue();
                     String UserName =""+ ds.child("userName").getValue();
                     String email =""+ ds.child("email").getValue();
-                    String cover =""+ ds.child("image").getValue();
-                    String image =""+ ds.child("cover").getValue();
+                    String cover =""+ ds.child("cover").getValue();
+                    String image =""+ ds.child("image").getValue();
                     String workExperience1 =""+ ds.child("workExperience").getValue();
                     String schoolExperience1 =""+ ds.child("school").getValue();
                     String achievement1 =""+ ds.child("achievements").getValue();
@@ -145,7 +147,7 @@ public class PsycActivity extends AppCompatActivity implements DatePickerDialog.
 
                     firstNamePro.setText(firstName);
                     lastNamePro.setText(lastName);
-                    addressPro.setText(address);
+                    addressPro.setText(email);
                     userNamePro.setText(UserName);
                     emailAddressPro.setText(email);
 
@@ -156,7 +158,11 @@ public class PsycActivity extends AppCompatActivity implements DatePickerDialog.
 
                     try {
                         //if image is received then set
-                        Picasso.get().load(image).into(avatarIv);
+//                        Picasso.get().load(image).into(avatarIv);
+
+                        Picasso.get().load(image)
+                                .placeholder(R.drawable.ic_account_circle_black_24dp)
+                                .into(avatarIv);
                     } catch (Exception e) {
                         //if there is any exception while getting image then set default
                         //Picasso.get().load(R.drawable.ic_default_img_white).into(avatarIv);
@@ -197,6 +203,8 @@ public class PsycActivity extends AppCompatActivity implements DatePickerDialog.
                         cancelBookPsychologist.setVisibility(View.VISIBLE);
                         bookPsychologist.setVisibility(View.GONE);
                         chatPsychologist.setVisibility(View.GONE);
+                        initUI();
+                        countDownStart();
                     }else if(status.equalsIgnoreCase("chatting")){
                         timeLayout.setVisibility(View.VISIBLE);
                         cancelBookPsychologist.setVisibility(View.GONE);
@@ -294,6 +302,9 @@ public class PsycActivity extends AppCompatActivity implements DatePickerDialog.
                 databaseReference.child("Bookings").push().setValue(hashMap);
                  keys=databaseReference.child("Bookings").push().getKey();
 
+                initUI();
+                countDownStart();
+
             }
         });
 
@@ -360,8 +371,6 @@ public class PsycActivity extends AppCompatActivity implements DatePickerDialog.
             }
         });
 
-        initUI();
-        countDownStart();
     }
 
     private void initUI() {
@@ -378,6 +387,27 @@ public class PsycActivity extends AppCompatActivity implements DatePickerDialog.
             @Override
             public void run() {
                 try {
+
+                    final DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Bookings");
+                    Query query = databaseReference.orderByChild("timeStamp").equalTo(timeStamp);
+                    query.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            for(DataSnapshot ds: dataSnapshot.getChildren()){
+                                if(ds.child("userId").getValue().equals(firebaseAuth.getCurrentUser().getUid())){
+                                    String time =""+ ds.child("time").getValue();
+                                    realTime=time;
+                                }else{
+                                }
+
+                            }
+                        }
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
+
                     handler.postDelayed(this, 1000);
                     SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
                     Date event_date = dateFormat.parse(realTime);
@@ -412,6 +442,13 @@ public class PsycActivity extends AppCompatActivity implements DatePickerDialog.
     protected void onStop() {
         super.onStop();
         handler.removeCallbacks(runnable);
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        initUI();
+        countDownStart();
     }
 
     @Override

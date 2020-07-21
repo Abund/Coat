@@ -164,7 +164,7 @@ public class MessageActivity extends AppCompatActivity {
                     String email =""+ ds.child("email").getValue();
                     String onlineStatus=""+ ds.child("onlineStatus").getValue();
                     String typingStatus =""+ ds.child("typingTo").getValue();
-                    String image =""+ ds.child("imageUrl").getValue();
+                    String image =""+ ds.child("image").getValue();
                     System.out.println("jhfyj"+UserName);
                     if(typingStatus.equals(myUid)){
                         userStatusTv.setText("typing...");
@@ -186,6 +186,7 @@ public class MessageActivity extends AppCompatActivity {
                     }catch (Exception e){
 
                     }
+
                 }
             }
 

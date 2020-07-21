@@ -692,6 +692,7 @@ public class HomeScreen extends AppCompatActivity
             replaceFragment(newFragment);
 
         } else if (id == R.id.nav_viewPsychologist) {
+            actionBar.setTitle("Lists of Psychologist");
             Fragment newFragment =  new ViewPsychologist();
             replaceFragment(newFragment);
 
@@ -701,7 +702,7 @@ public class HomeScreen extends AppCompatActivity
             replaceFragment(newFragment);
 
         } else if (id == R.id.nav_psyChatList) {
-            actionBar.setTitle("Psychologist Chat Lists");
+            actionBar.setTitle("Psychologist ChatLists");
             Fragment newFragment =  new PsychologistFragmnet();
             replaceFragment(newFragment);
 
