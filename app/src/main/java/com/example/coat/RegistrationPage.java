@@ -11,10 +11,13 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.coat.model.User;
+import com.example.coat.popups.TermsAndConditions;
 import com.facebook.AccessToken;
 import com.facebook.AccessTokenTracker;
 import com.facebook.CallbackManager;
@@ -57,6 +60,8 @@ public class RegistrationPage extends AppCompatActivity {
     EditText firstName,lastName,email,password;
     SignInButton signInButton;
     GoogleSignInClient mGoogleSignInClient;
+    TextView termsAndConditions;
+    CheckBox checkBox;
     private LoginButton loginButton;
     private CallbackManager callbackManager;
     private int RC_SIGN_IN=1;
@@ -69,6 +74,8 @@ public class RegistrationPage extends AppCompatActivity {
         setContentView(R.layout.activity_registeration_page);
 
 
+        checkBox = (CheckBox) findViewById(R.id.checkBoxTerms);
+        termsAndConditions= (TextView) findViewById(R.id.termsAndConditionsText);
         signUp = (Button) findViewById(R.id.signup);
         firstName = (EditText) findViewById(R.id.firstName);
         lastName = (EditText) findViewById(R.id.lastName);
@@ -161,41 +168,47 @@ public class RegistrationPage extends AppCompatActivity {
                     return;
                 }
 
-                // register the user in firebase
-                firebaseAuth.createUserWithEmailAndPassword(email1,password1).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if(task.isSuccessful()){
+                if(checkBox.isChecked()){
+                    firebaseAuth.createUserWithEmailAndPassword(email1,password1).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if(task.isSuccessful()){
 
-                            User user = new User();
-                            user.setEmail(email.getText().toString().trim());
-                            user.setFirstName(firstName.getText().toString().trim());
-                            user.setLastName(lastName.getText().toString().trim());
-                            user.setUid(FirebaseAuth.getInstance().getCurrentUser().getUid());
-                            String timeStamp= String.valueOf(System.currentTimeMillis());
-                            user.setOnlineStatus(timeStamp);
-                            user.setTypingTo("noOne");
-                            user.setImageUrl("");
-                            user.setCover("");
+                                User user = new User();
+                                user.setEmail(email.getText().toString().trim());
+                                user.setFirstName(firstName.getText().toString().trim());
+                                user.setLastName(lastName.getText().toString().trim());
+                                user.setUid(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                                String timeStamp= String.valueOf(System.currentTimeMillis());
+                                user.setOnlineStatus(timeStamp);
+                                user.setTypingTo("noOne");
+                                user.setImageUrl("");
+                                user.setCover("");
 
-                            myRef.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).setValue(user).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                @Override
-                                public void onSuccess(Void aVoid) {
-                                    Toast.makeText(RegistrationPage.this,"Registration successful",Toast.LENGTH_SHORT).show();
-                                    Intent at = new Intent(RegistrationPage.this, HomeScreen.class);
-                                    startActivity(at);
-                                }
-                            });
-                            myRef.keepSynced(true);
+                                myRef.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).setValue(user).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        Toast.makeText(RegistrationPage.this,"Registration successful",Toast.LENGTH_SHORT).show();
+                                        Intent at = new Intent(RegistrationPage.this, HomeScreen.class);
+                                        startActivity(at);
+                                    }
+                                });
+                                myRef.keepSynced(true);
 
 
 
-                        }else{
-                            System.out.println(task.getException());
-                            Toast.makeText(RegistrationPage.this,"Error in registration",Toast.LENGTH_SHORT).show();
+                            }else{
+                                System.out.println(task.getException());
+                                Toast.makeText(RegistrationPage.this,"Error in registration",Toast.LENGTH_SHORT).show();
+                            }
                         }
-                    }
-                });
+                    });
+                }else {
+                    Toast.makeText(RegistrationPage.this,"Terms and Conditions must be Checked and accepted",Toast.LENGTH_SHORT).show();
+                }
+
+                // register the user in firebase
+
 
             }
         });
@@ -215,6 +228,12 @@ public class RegistrationPage extends AppCompatActivity {
             @Override
             public void onClick(View v){
                 signIn();
+            }
+        });
+        termsAndConditions.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                startActivity(new Intent(RegistrationPage.this, TermsAndConditions.class));
             }
         });
     }
