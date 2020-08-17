@@ -68,12 +68,21 @@ import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.spec.SecretKeySpec;
 
 public class MessageActivity extends AppCompatActivity {
 
@@ -93,6 +102,10 @@ public class MessageActivity extends AppCompatActivity {
 
     List<Chats> chatsList;
     AdapterChat adapterChat;
+
+    private byte encryptionKey[]={9,115,51,86,105,4,-31,-23,-68,88,17,20,3,-105,119,-53};
+    private Cipher cipher,decipher;
+    private SecretKeySpec secretKeySpec;
 
     String hisUid;
     String myUid;
@@ -133,6 +146,17 @@ public class MessageActivity extends AppCompatActivity {
         imageButton= findViewById(R.id.sendBtn);
         attachBtn = findViewById(R.id.attachBtn);
         blockIv = findViewById(R.id.blockIv);
+
+        try {
+            cipher =Cipher.getInstance("AES");
+            decipher=Cipher.getInstance("AES");
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (NoSuchPaddingException e) {
+            e.printStackTrace();
+        }
+
+        secretKeySpec = new SecretKeySpec(encryptionKey,"AES");
 
         //init permissions arrays
         cameraPermissions = new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
@@ -257,6 +281,47 @@ public class MessageActivity extends AppCompatActivity {
         checkIsBlocked();
         seenMessage();
 
+    }
+
+    private String AESEncryption(String message){
+        byte[] stringByte = message.getBytes();
+        byte[] encryptedByte = new byte[stringByte.length];
+        try {
+            cipher.init(Cipher.ENCRYPT_MODE,secretKeySpec);
+            encryptedByte = cipher.doFinal(stringByte);
+        } catch (InvalidKeyException e) {
+            e.printStackTrace();
+        } catch (BadPaddingException e) {
+            e.printStackTrace();
+        } catch (IllegalBlockSizeException e) {
+            e.printStackTrace();
+        }
+
+        String returnString=null;
+        try {
+            returnString = new String(encryptedByte,"ISO-8859-1");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return returnString;
+    }
+
+    private String AESDecryption(String string) throws UnsupportedEncodingException {
+        byte[] encryptedByte=string.getBytes("ISO-8859-1");
+        String decryptedString =string;
+        byte[] decryption;
+        try {
+            decipher.init(Cipher.DECRYPT_MODE,secretKeySpec);
+            decryption=decipher.doFinal(encryptedByte);
+            decryptedString= new String(decryption);
+        } catch (InvalidKeyException e) {
+            e.printStackTrace();
+        } catch (BadPaddingException e) {
+            e.printStackTrace();
+        } catch (IllegalBlockSizeException e) {
+            e.printStackTrace();
+        }
+        return decryptedString;
     }
 
     private void checkIsBlocked() {
@@ -567,7 +632,7 @@ public class MessageActivity extends AppCompatActivity {
         HashMap<String,Object> hashMap= new HashMap<>();
         hashMap.put("sender",myUid);
         hashMap.put("receiver",hisUid);
-        hashMap.put("message",message);
+        hashMap.put("message",AESEncryption(message));
         hashMap.put("timeStamp",timeStamp);
         hashMap.put("isSeen",false);
         hashMap.put("type", "text");

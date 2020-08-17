@@ -28,10 +28,19 @@ import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
+import java.io.UnsupportedEncodingException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.spec.SecretKeySpec;
 
 public class AdapterChat extends RecyclerView.Adapter<AdapterChat.MyHolder>{
 
@@ -44,10 +53,25 @@ public class AdapterChat extends RecyclerView.Adapter<AdapterChat.MyHolder>{
 
     FirebaseUser firebaseUser;
 
+    private byte encryptionKey[]={9,115,51,86,105,4,-31,-23,-68,88,17,20,3,-105,119,-53};
+    private Cipher cipher,decipher;
+    private SecretKeySpec secretKeySpec;
+
     public AdapterChat(Context context, List<Chats> chatsList, String imageUrl) {
         this.context = context;
         this.chatsList = chatsList;
         this.imageUrl = imageUrl;
+
+        try {
+            cipher =Cipher.getInstance("AES");
+            decipher=Cipher.getInstance("AES");
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (NoSuchPaddingException e) {
+            e.printStackTrace();
+        }
+
+        secretKeySpec = new SecretKeySpec(encryptionKey,"AES");
     }
 
     @NonNull
@@ -60,6 +84,24 @@ public class AdapterChat extends RecyclerView.Adapter<AdapterChat.MyHolder>{
             View view = LayoutInflater.from(context).inflate(R.layout.row_chat_left,parent,false);
             return new MyHolder(view);
         }
+    }
+
+    private String AESDecryption(String string) throws UnsupportedEncodingException {
+        byte[] encryptedByte=string.getBytes("ISO-8859-1");
+        String decryptedString =string;
+        byte[] decryption;
+        try {
+            decipher.init(Cipher.DECRYPT_MODE,secretKeySpec);
+            decryption=decipher.doFinal(encryptedByte);
+            decryptedString= new String(decryption);
+        } catch (InvalidKeyException e) {
+            e.printStackTrace();
+        } catch (BadPaddingException e) {
+            e.printStackTrace();
+        } catch (IllegalBlockSizeException e) {
+            e.printStackTrace();
+        }
+        return decryptedString;
     }
 
     @Override
@@ -77,7 +119,11 @@ public class AdapterChat extends RecyclerView.Adapter<AdapterChat.MyHolder>{
             holder.message.setVisibility(View.VISIBLE);
             holder.messageIv.setVisibility(View.GONE);
 
-            holder.message.setText(message);
+            try {
+                holder.message.setText(AESDecryption(message));
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
         }
         else {
             //image message
@@ -86,7 +132,11 @@ public class AdapterChat extends RecyclerView.Adapter<AdapterChat.MyHolder>{
 
             Picasso.get().load(message).placeholder(R.drawable.ic_image_black).into(holder.messageIv);
         }
-        holder.message.setText(message);
+        try {
+            holder.message.setText(AESDecryption(message));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
         holder.timeStamp.setText(dateTime);
 
         //set seen/delivered status of message

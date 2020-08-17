@@ -194,9 +194,6 @@ public class RegistrationPage extends AppCompatActivity {
                                     }
                                 });
                                 myRef.keepSynced(true);
-
-
-
                             }else{
                                 System.out.println(task.getException());
                                 Toast.makeText(RegistrationPage.this,"Error in registration",Toast.LENGTH_SHORT).show();
