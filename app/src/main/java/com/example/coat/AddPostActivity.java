@@ -82,7 +82,7 @@ public class AddPostActivity extends AppCompatActivity {
 
     Uri image_uri=null;
 
-    String name,email,uid,dp;
+    String name,email,uid,dp,lastName;
 
     ProgressDialog pd;
 
@@ -150,6 +150,7 @@ public class AddPostActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for(DataSnapshot ds: dataSnapshot.getChildren()){
                     name=""+ds.child("firstName").getValue();
+                    lastName=""+ds.child("lastName").getValue();
                     email=""+ds.child("email").getValue();
                     dp=""+ds.child("imageUrl").getValue();
                 }
@@ -560,7 +561,7 @@ public class AddPostActivity extends AppCompatActivity {
                                             HashMap<String, Object> hashMap = new HashMap<>();
                                             //put post info
                                             hashMap.put("uid", uid);
-                                            hashMap.put("uName", name);
+                                            hashMap.put("uName", name+" "+lastName);
                                             hashMap.put("uEmail", email);
                                             hashMap.put("uDp", dp);
                                             hashMap.put("pTitle", title);
@@ -637,7 +638,7 @@ public class AddPostActivity extends AppCompatActivity {
                             HashMap<String, Object> hashMap = new HashMap<>();
                             //put post info
                             hashMap.put("uid", uid);
-                            hashMap.put("uName", name);
+                            hashMap.put("uName", name+" "+lastName);
                             hashMap.put("uEmail", email);
                             hashMap.put("uDp", dp);
                             hashMap.put("pTitle", title);
@@ -682,7 +683,7 @@ public class AddPostActivity extends AppCompatActivity {
         HashMap<String, Object> hashMap = new HashMap<>();
         //put post info
         hashMap.put("uid", uid);
-        hashMap.put("uName", name);
+        hashMap.put("uName", name+" "+lastName);
         hashMap.put("uEmail", email);
         hashMap.put("uDp", dp);
         hashMap.put("pTitle", title);
@@ -745,7 +746,7 @@ public class AddPostActivity extends AppCompatActivity {
                                 HashMap<Object, String> hashMap = new HashMap<>();
                                 //put post info
                                 hashMap.put("uid", uid);
-                                hashMap.put("uName", name);
+                                hashMap.put("uName", name+" "+lastName);
                                 hashMap.put("uEmail", email);
                                 hashMap.put("uDp", dp);
                                 hashMap.put("pid", timeStamp);
@@ -811,7 +812,7 @@ public class AddPostActivity extends AppCompatActivity {
             HashMap<Object, String> hashMap = new HashMap<>();
             //put post info
             hashMap.put("uid", uid);
-            hashMap.put("uName", name);
+            hashMap.put("uName", name+" "+lastName);
             hashMap.put("uEmail", email);
             hashMap.put("uDp", dp);
             hashMap.put("pid", timeStamp);

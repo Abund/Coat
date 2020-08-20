@@ -82,16 +82,17 @@ public class AdapterNotification extends RecyclerView.Adapter<AdapterNotificatio
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         for (DataSnapshot ds : dataSnapshot.getChildren()) {
                             String name = "" + ds.child("firstName").getValue();
+                            String lastName = "" + ds.child("lastName").getValue();
                             String image = "" + ds.child("imageUrl").getValue();
                             String email = "" + ds.child("email").getValue();
 
                             //add to model
-                            model.setsName(name);
+                            model.setsName(name+" "+lastName);
                             model.setsEmail(email);
                             model.setsImage(image);
 
                             //set to views
-                            holder.nameTv.setText(name);
+                            holder.nameTv.setText(name+" "+lastName);
 
                             try {
                                 Picasso.get().load(image).placeholder(R.drawable.ic_default_img).into(holder.avatarIv);

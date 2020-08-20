@@ -569,13 +569,16 @@ public class PostDetailActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot ds: dataSnapshot.getChildren()){
-                    myName = ""+ds.child("firstName").getValue();
-                    myDp = ""+ds.child("imageUrl").getValue();
+                    myName = ""+ds.child("firstName").getValue()+" "+ds.child("lastName").getValue();
+                    myDp = ""+ds.child("image").getValue();
 
                     //set data
                     try {
                         //if image is received then set
-                        Picasso.get().load(myDp).placeholder(R.drawable.ic_default_img).into(cAvatarIv);
+                        Picasso.get().load(myDp)
+                                .placeholder(R.drawable.ic_account_circle_black_24dp)
+                                .into(cAvatarIv);
+                        //Picasso.get().load(myDp).placeholder(R.drawable.ic_default_img).into(cAvatarIv);
                     }
                     catch (Exception e){
                         Picasso.get().load(R.drawable.ic_default_img).into(cAvatarIv);

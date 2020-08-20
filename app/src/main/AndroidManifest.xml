@@ -109,7 +109,7 @@
         -->
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="com.blogspot.atifsoftwares.firebaseapp.fileprovider"
+            android:authorities="com.example.coat.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data

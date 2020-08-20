@@ -272,7 +272,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder>{
             bitmap.compress(Bitmap.CompressFormat.PNG, 90, stream);
             stream.flush();
             stream.close();
-            uri = FileProvider.getUriForFile(context, "com.blogspot.atifsoftwares.firebaseapp.fileprovider",
+            uri = FileProvider.getUriForFile(context, "com.example.coat.fileprovider",
                     file);
         }
         catch (Exception e){
@@ -398,7 +398,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder>{
         final ProgressDialog pd = new ProgressDialog(context);
         pd.setMessage("Deleting...");
 
-        Query fquery = FirebaseDatabase.getInstance().getReference("Posts").orderByChild("pId").equalTo(pId);
+        Query fquery = FirebaseDatabase.getInstance().getReference("Posts").orderByChild("pid").equalTo(pId);
         fquery.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {

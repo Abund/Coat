@@ -57,7 +57,7 @@ public class ThereProfileActivity extends AppCompatActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);
 
         firstNamePro = findViewById(R.id.firstNamePro);
-        lastNamePro =findViewById(R.id.lastNamePro);
+        lastNamePro =findViewById(R.id.lastNamePro1);
         addressPro = findViewById(R.id.addressPro);
         userNamePro =findViewById(R.id.userNamePro);
         emailAddressPro = findViewById(R.id.emailAddressPro);
@@ -88,13 +88,15 @@ public class ThereProfileActivity extends AppCompatActivity {
 
                     firstNamePro.setText(firstName);
                     lastNamePro.setText(lastName);
-                    addressPro.setText(address);
-                    userNamePro.setText(UserName);
+                    addressPro.setText(email);
+                    userNamePro.setText(email);
                     emailAddressPro.setText(email);
 
                     try {
                         //if image is received then set
-                        Picasso.get().load(image).into(avatarIv);
+                        Picasso.get().load(image)
+                                .placeholder(R.drawable.ic_account_circle_black_24dp)
+                                .into(avatarIv);
                     } catch (Exception e) {
                         //if there is any exception while getting image then set default
                         //Picasso.get().load(R.drawable.ic_default_img_white).into(avatarIv);
