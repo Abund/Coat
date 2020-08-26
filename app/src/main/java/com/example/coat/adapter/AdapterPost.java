@@ -29,9 +29,11 @@ import com.example.coat.PostLikedByActivity;
 import com.example.coat.R;
 import com.example.coat.ThereProfileActivity;
 import com.example.coat.model.Post;
+import com.example.coat.model.User;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -84,7 +86,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder>{
 
         final String uid= postList.get(position).getUid();
         String email= postList.get(position).getuEmail();
-        String name= postList.get(position).getuName();
+         String name= postList.get(position).getuName();
         String uDp= postList.get(position).getuDp();
         final String pid= postList.get(position).getPid();
         final String pTitle= postList.get(position).getpTitle();
@@ -98,7 +100,32 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder>{
         calendar.setTimeInMillis(Long.parseLong(pTimeStamp));
         String time = DateFormat.format("dd/MM/yyyy hh:mm:aa",calendar).toString();
 
-        holder.uNameTv.setText(name);
+        if(uid.equalsIgnoreCase(FirebaseAuth.getInstance().getCurrentUser().getUid())){
+            FirebaseDatabase database = FirebaseDatabase.getInstance();
+            DatabaseReference databaseReference=database.getReference("Users");
+            databaseReference.keepSynced(true);
+
+            databaseReference.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    List<String> keys = new ArrayList<>();
+                    User user= new User();
+                    user=dataSnapshot.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).getValue(User.class);
+                    //name=user.getFirstName()+" "+user.getLastName();
+                    holder.uNameTv.setText(user.getFirstName()+" "+user.getLastName());
+                    final User finalUser = user;
+
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+        }else {
+            holder.uNameTv.setText(name);
+        }
+
         holder.pTimeTv.setText(time);
         holder.pTitleTv.setText(pTitle);
         holder.pDescriptionTv.setText(pDescription);

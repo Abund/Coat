@@ -16,8 +16,17 @@ import com.example.coat.R;
 import com.example.coat.model.User;
 import com.squareup.picasso.Picasso;
 
+import java.io.UnsupportedEncodingException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.List;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.spec.SecretKeySpec;
 
 public class AdapterChatList extends RecyclerView.Adapter<AdapterChatList.MyHolder> {
 
@@ -26,11 +35,26 @@ public class AdapterChatList extends RecyclerView.Adapter<AdapterChatList.MyHold
     List<User> userList; //get user info
     private HashMap<String, String> lastMessageMap;
 
+    private byte encryptionKey[]={9,115,51,86,105,4,-31,-23,-68,88,17,20,3,-105,119,-53};
+    private Cipher cipher,decipher;
+    private SecretKeySpec secretKeySpec;
+
     //constructor
     public AdapterChatList(Context context, List<User> userList) {
         this.context = context;
         this.userList = userList;
         lastMessageMap = new HashMap<>();
+
+        try {
+            cipher =Cipher.getInstance("AES");
+            decipher=Cipher.getInstance("AES");
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (NoSuchPaddingException e) {
+            e.printStackTrace();
+        }
+
+        secretKeySpec = new SecretKeySpec(encryptionKey,"AES");
     }
 
     @NonNull
@@ -41,22 +65,45 @@ public class AdapterChatList extends RecyclerView.Adapter<AdapterChatList.MyHold
         return new MyHolder(view);
     }
 
+    private String AESDecryption(String string) throws UnsupportedEncodingException {
+        byte[] encryptedByte=string.getBytes("ISO-8859-1");
+        String decryptedString =string;
+        byte[] decryption;
+        try {
+            decipher.init(Cipher.DECRYPT_MODE,secretKeySpec);
+            decryption=decipher.doFinal(encryptedByte);
+            decryptedString= new String(decryption);
+        } catch (InvalidKeyException e) {
+            e.printStackTrace();
+        } catch (BadPaddingException e) {
+            e.printStackTrace();
+        } catch (IllegalBlockSizeException e) {
+            e.printStackTrace();
+        }
+        return decryptedString;
+    }
+
     @Override
     public void onBindViewHolder(@NonNull MyHolder myHolder, final int i) {
         //get data
         final String hisUid = userList.get(i).getUid();
         String userImage = userList.get(i).getImageUrl();
         String userName = userList.get(i).getFirstName();
+        String lastName = userList.get(i).getLastName();
         String lastMessage = lastMessageMap.get(hisUid);
 
         //set data
-        myHolder.nameTv.setText(userName);
+        myHolder.nameTv.setText(userName+" "+lastName);
         if (lastMessage==null || lastMessage.equals("default")){
             myHolder.lastMessageTv.setVisibility(View.GONE);
         }
         else {
             myHolder.lastMessageTv.setVisibility(View.VISIBLE);
-            myHolder.lastMessageTv.setText(lastMessage);
+            try {
+                myHolder.lastMessageTv.setText(AESDecryption(lastMessage));
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
         }
         try {
             Picasso.get().load(userImage).placeholder(R.drawable.ic_default_img).into(myHolder.profileIv);

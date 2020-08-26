@@ -198,14 +198,16 @@ public class PsycActivity extends AppCompatActivity implements DatePickerDialog.
                     String status =""+ ds.child("status").getValue();
                     timeStamp=""+ ds.child("timeStamp").getValue();
                     sessionTime.setText(time);
-                    if(status.equalsIgnoreCase("booked")){
+                    if(status.equalsIgnoreCase("booked")
+                            &&psychologistId.equalsIgnoreCase(uid)){
                         timeLayout.setVisibility(View.VISIBLE);
                         cancelBookPsychologist.setVisibility(View.VISIBLE);
                         bookPsychologist.setVisibility(View.GONE);
                         chatPsychologist.setVisibility(View.GONE);
                         initUI();
                         countDownStart();
-                    }else if(status.equalsIgnoreCase("chatting")){
+                    }else if(status.equalsIgnoreCase("chatting")
+                            && psychologistId.equalsIgnoreCase(uid)){
                         timeLayout.setVisibility(View.VISIBLE);
                         cancelBookPsychologist.setVisibility(View.GONE);
                         bookPsychologist.setVisibility(View.GONE);

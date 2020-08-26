@@ -117,21 +117,19 @@ public class PsychologistFragmnet extends Fragment {
                             reference1.addValueEventListener(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                    //userList.clear();
+                                    userList.clear();
                                     for(DataSnapshot ds:dataSnapshot.getChildren()){
                                         //User user = new User();
                                         BookingSession bookingSession = ds.getValue(BookingSession.class);
                                         bloodPressureKey.add(ds.getKey());
                                         //userList.add(user);
-                                        if(bookingSession.getPsychologistId().equals(user.getUid())){
-                                            if(bookingSession.getStatus().equals("chatting")){
+                                        if(bookingSession.getStatus().equals("chatting")){
+                                            if(bookingSession.getPsychologistId().equals(user.getUid())&&bookingSession.getUserId().equals(currentUser.getUid())){
                                                 userList.add(user);
                                                 timeStamp=bookingSession.getTimeStamp();
-                                            }else {
-
                                             }
-
                                         }
+
                                     }
                                     //adapter
                                     adapterChatlist = new AdapterPsyChatList(getContext(), userList,timeStamp);
@@ -152,6 +150,7 @@ public class PsychologistFragmnet extends Fragment {
                             });
                             break;
                         }
+
                     }
 
                 }

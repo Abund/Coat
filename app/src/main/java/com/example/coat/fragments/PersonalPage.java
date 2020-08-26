@@ -303,7 +303,7 @@ public class PersonalPage extends Fragment {
     }
 
     private void showEditProfileDialogue() {
-        String options[] = {"Edit Profile Picture", "Edit Cover Photo","Edit first name","Edit last name","Edit address","Edit user name"};
+        String options[] = {"Edit Profile Picture", "Edit Cover Photo","Edit first name","Edit last name","Edit address","Edit user name","Change Password"};
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle("Choose Action");
         builder.setCancelable(true);
@@ -320,23 +320,23 @@ public class PersonalPage extends Fragment {
                     progressDialog.setMessage("Updating Cover Photo");
                     profileOrCoverPhoto = "cover"; //i.e. changing cover photo, make sure to assign same value
                     showImagePicDialog();
-                }else if(i==0){
+                }else if(i==2){
                     progressDialog.setMessage("Updating first name");
                     showFirstNameUpdateDialogue("firstName");
 
-                }else if(i==1){
+                }else if(i==3){
                     progressDialog.setMessage("Updating last name");
                     showFirstNameUpdateDialogue("lastName");
 
-                }else if(i==2){
+                }else if(i==4){
                     progressDialog.setMessage("Updating address");
                     showFirstNameUpdateDialogue("address");
 
-                }else if(i==3){
+                }else if(i==5){
                     progressDialog.setMessage("Updating user name");
                     showFirstNameUpdateDialogue("userName");
 
-                }else if (i == 4) {
+                }else if (i == 6) {
                     //Edit Phone clicked
                     progressDialog.setMessage("Changing Password");
                     showChangePasswordDialog();

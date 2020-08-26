@@ -163,8 +163,8 @@ public class RegistrationPage extends AppCompatActivity {
                     return;
                 }
 
-                if(password1.length()<6){
-                    password.setError("Password must be greater than 6 characters long");
+                if(password1.length()<8){
+                    password.setError("Password must be greater than 8 characters long");
                     return;
                 }
 
@@ -316,7 +316,12 @@ public class RegistrationPage extends AppCompatActivity {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithCredential:success");
                             FirebaseUser user = firebaseAuth.getCurrentUser();
-                            updateUI(user);
+                            if (task.getResult().getAdditionalUserInfo().isNewUser()){
+                                updateUI(user);
+                            }else{
+                                Intent at = new Intent(RegistrationPage.this, HomeScreen.class);
+                                startActivity(at);
+                            }
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
